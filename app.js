@@ -47,46 +47,50 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use(helmet());
 
 // Set security HTTP headers - Advanced configuration to avoid problems with mapbox and login at development
-if (process.env.NODE_ENV === 'development') {
-  const defaultSrc = [
-    'https://*.mapbox.com/'
-  ];
-  const scriptSrcUrls = [
-    'https://api.mapbox.com/'
-  ];
-  const styleSrcUrls = [
-    'https://api.mapbox.com/',
-    'https://fonts.googleapis.com/'
-  ];
-  const connectSrcUrls = [
-    'https://*.mapbox.com/',
-    'http://127.0.0.1:*/',
-    'ws://127.0.0.1:*'
-  ];
-  const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
-  app.use(
-    helmet  
-    .contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'", ...defaultSrc],
-        baseUri: ["'self'"],
-        connectSrc: ["'self'", ...connectSrcUrls],
-        scriptSrc: ["'self'", ...scriptSrcUrls],
-        scriptSrcElem: ["'self'", ...scriptSrcUrls],
-        styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-        workerSrc: ["'self'", 'blob:'],
-        objectSrc: [],
-        imgSrc: ["'self'", 'blob:', 'data:'],
-        fontSrc: ["'self'", ...fontSrcUrls],
-      },
-    })
-  );
-}
+const defaultSrc = [
+  'https://*.mapbox.com/',
+  'https://*.stripe.com/'
+];
+const scriptSrcUrls = [
+  'https://api.mapbox.com/',
+  'https://*.stripe.com/'
+];
+const scriptSrcElem = [
+  'https://api.mapbox.com/',
+  'https://js.stripe.com/v3/'
+];
+const styleSrcUrls = [
+  'https://api.mapbox.com/',
+  'https://fonts.googleapis.com/'
+];
+const connectSrcUrls = [
+  'https://*.mapbox.com/',
+  'http://127.0.0.1:*/',
+  'ws://127.0.0.1:*'
+];
+const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+app.use(
+  helmet  
+  .contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", ...defaultSrc],
+      baseUri: ["'self'"],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'self'", ...scriptSrcUrls],
+      scriptSrcElem: ["'self'", ...scriptSrcElem],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", 'blob:'],
+      objectSrc: [],
+      imgSrc: ["'self'", 'blob:', 'data:'],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+);
 
 // Set security HTTP headers - Base configuration - for production
-if (process.env.NODE_ENV === 'production') {
-// app.use(helmet());
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(helmet());
+// }
 
 
 // Development logging
