@@ -58,7 +58,7 @@ const scriptSrcUrls = [
 ];
 const scriptSrcElem = [
   'https://api.mapbox.com/',
-  'https://js.stripe.com/v3/'
+  'https://*.stripe.com/'
 ];
 const styleSrcUrls = [
   'https://api.mapbox.com/',
@@ -66,7 +66,8 @@ const styleSrcUrls = [
 ];
 const connectSrcUrls = [
   'https://*.mapbox.com/',
-  'https://*.stripe.com/',
+  'https://*.stripe.com',
+  'https://r.stripe.com',
   'http://127.0.0.1:*/',
   'ws://127.0.0.1:*'
 ];
