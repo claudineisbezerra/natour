@@ -75,7 +75,6 @@ const styleSrcUrls = [
 ];
 const connectSrcUrls = [
   'https://*.mapbox.com/',
-  'https://*.stripe.com',
   'https://r.stripe.com',
   'https://edge-js.stripe.com',
   'http://127.0.0.1:*/',
