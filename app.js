@@ -50,24 +50,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set security HTTP headers - Advanced configuration to avoid problems with mapbox and login at development
 const defaultSrc = [
   'https://*.mapbox.com/',
-  'https://*.stripe.com/'
+  'https://*.stripe.com',
+  'https://r.stripe.com',
+  'https://edge-js.stripe.com'
 ];
 const scriptSrcUrls = [
   'https://api.mapbox.com/',
-  'https://*.stripe.com/'
+  'https://*.stripe.com',
+  'https://r.stripe.com',
+  'https://edge-js.stripe.com'
 ];
 const scriptSrcElem = [
   'https://api.mapbox.com/',
-  'https://*.stripe.com/'
+  'https://*.stripe.com',
+  'https://r.stripe.com',
+  'https://edge-js.stripe.com'
 ];
 const styleSrcUrls = [
   'https://api.mapbox.com/',
+  'https://*.stripe.com',
+  'https://r.stripe.com',
+  'https://edge-js.stripe.com',
   'https://fonts.googleapis.com/'
 ];
 const connectSrcUrls = [
   'https://*.mapbox.com/',
   'https://*.stripe.com',
   'https://r.stripe.com',
+  'https://edge-js.stripe.com',
   'http://127.0.0.1:*/',
   'ws://127.0.0.1:*'
 ];
