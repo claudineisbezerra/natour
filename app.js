@@ -107,12 +107,9 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
-app.post(
-  '/webhook-checkout',
-  bodyParser.raw({ type: 'application/json' }),
-  bookingController.webhookCheckout
-);
+// Stripe webhook, BEFORE body-parser (express.json), because stripe needs the body as stream and not as JSON
+// to-do: Substitute bodyParser,raw() by new express.raw() recently available in express
+app.post('/webhook-checkout',bodyParser.raw({ type: 'application/json' }), bookingController.webhookCheckout);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
