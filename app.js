@@ -53,33 +53,44 @@ const defaultSrc = [
   'https://*.stripe.com'
 ];
 const scriptSrc = [
+  'http://*',
   'https://api.mapbox.com/',
+  'https://checkout.stripe.com',
+  'https://api.stripe.com',
   'https://js.stripe.com',
-  'https://checkout.stripe.com'
+  'https://edge-js.stripe.com'
 ];
 const scriptSrcElem = [
+  'http://*',
   'https://api.mapbox.com/',
+  'https://checkout.stripe.com',
+  'https://api.stripe.com',
   'https://js.stripe.com',
-  'https://checkout.stripe.com'
-];
+  'https://edge-js.stripe.com'
+]
 const styleSrc = [
+  'http://*',
   'https://api.mapbox.com/',
-  'https://js.stripe.com',
   'https://fonts.googleapis.com/'
 ];
 const connectSrc = [
-  'https://api.stripe.com',
   'https://checkout.stripe.com',
+  'https://api.stripe.com',
+  'https://js.stripe.com',
+  'https://edge-js.stripe.com',
   'https://*.mapbox.com/',
   'http://127.0.0.1:*/',
-  'ws://127.0.0.1:*'
+  'ws://127.0.0.1:*',
+  'http://localhost:*/',
+  'ws://localhost:*'  
 ];
 const imgSrc = [
   'https://*.stripe.com'
 ];
 const frameSrc = [
-  'https://hooks.stripe.com',
-  'https://checkout.stripe.com'
+  'https://checkout.stripe.com',
+  'https://js.stripe.com',
+  'https://hooks.stripe.com'
 ];
 const fontSrc = [
   'fonts.googleapis.com', 
@@ -90,20 +101,21 @@ app.use(
   helmet  
   .contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", ...defaultSrc],
+      defaultSrc: ["'self'", 'data:', 'gap:', ...defaultSrc],
       baseUri: ["'self'"],
       connectSrc: ["'self'", ...connectSrc],
-      scriptSrc: ["'self'", ...scriptSrc],
-      scriptSrcElem: ["'self'", ...scriptSrcElem],
-      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrc],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrc],
+      scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrcElem],
+      styleSrc: ["'self'", 'http://*', "'unsafe-inline'", ...styleSrc],
       workerSrc: ["'self'", 'blob:'],
-      objectSrc: [],
+      objectSrc: ["'none'"],
       imgSrc: ["'self'", 'blob:', 'data:', ...imgSrc],
       fontSrc: ["'self'", ...fontSrc],
       frameSrc: ["'self'",...frameSrc]
     },
   })
 );
+
 
 // Set security HTTP headers - Base configuration - for production
 // if (process.env.NODE_ENV === 'production') {
@@ -125,7 +137,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Stripe webhook, BEFORE body-parser (express.json), because stripe needs the body as stream and not as JSON
-// to-do: Substitute bodyParser,raw() by new express.raw() recently available in express
+// to-do: Substitute bodyParser.raw() by new express.raw() recently available in express
 app.post('/webhook-checkout',bodyParser.raw({ type: 'application/json' }), bookingController.webhookCheckout);
 
 // Body parser, reading data from body into req.body

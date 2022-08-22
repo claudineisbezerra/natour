@@ -6,6 +6,10 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  console.log('getCheckoutSession (req cookies) FROM STRIPE');
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // console.log(tour);
@@ -34,11 +38,17 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     ]
   });
 
+  console.log(session);
+  console.log(res.cookies);
+
   // 3) Create session as response
   res.status(200).json({
     status: 'success',
     session
   });
+  console.log('getCheckoutSession (res cookies) FROM STRIPE');
+  // console.log(res.cookies);
+  // console.log(res.signedCookies);
 });
 
 const createBookingCheckout = async session => {
