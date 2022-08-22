@@ -52,40 +52,55 @@ const defaultSrc = [
   'https://*.mapbox.com/',
   'https://*.stripe.com'
 ];
-const scriptSrcUrls = [
+const scriptSrc = [
   'https://api.mapbox.com/',
-  'https://*.stripe.com'
+  'https://js.stripe.com',
+  'https://checkout.stripe.com'
 ];
 const scriptSrcElem = [
   'https://api.mapbox.com/',
-  'https://*.stripe.com'
+  'https://js.stripe.com',
+  'https://checkout.stripe.com'
 ];
-const styleSrcUrls = [
+const styleSrc = [
   'https://api.mapbox.com/',
-  'https://*.stripe.com',
+  'https://js.stripe.com',
   'https://fonts.googleapis.com/'
 ];
-const connectSrcUrls = [
+const connectSrc = [
+  'https://api.stripe.com',
+  'https://checkout.stripe.com',
   'https://*.mapbox.com/',
-  'https://*.stripe.com',
   'http://127.0.0.1:*/',
   'ws://127.0.0.1:*'
 ];
-const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+const imgSrc = [
+  'https://*.stripe.com'
+];
+const frameSrc = [
+  'https://hooks.stripe.com',
+  'https://checkout.stripe.com'
+];
+const fontSrc = [
+  'fonts.googleapis.com', 
+  'fonts.gstatic.com'
+];
+
 app.use(
   helmet  
   .contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'", ...defaultSrc],
       baseUri: ["'self'"],
-      connectSrc: ["'self'", ...connectSrcUrls],
-      scriptSrc: ["'self'", ...scriptSrcUrls],
+      connectSrc: ["'self'", ...connectSrc],
+      scriptSrc: ["'self'", ...scriptSrc],
       scriptSrcElem: ["'self'", ...scriptSrcElem],
-      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrc],
       workerSrc: ["'self'", 'blob:'],
       objectSrc: [],
-      imgSrc: ["'self'", 'blob:', 'data:'],
-      fontSrc: ["'self'", ...fontSrcUrls],
+      imgSrc: ["'self'", 'blob:', 'data:', ...imgSrc],
+      fontSrc: ["'self'", ...fontSrc],
+      frameSrc: ["'self'",...frameSrc]
     },
   })
 );
