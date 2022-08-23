@@ -57,11 +57,13 @@ const scriptSrc = [
   'https://js.stripe.com/',
   'https://checkout.stripe.com/',
   'https://js.stripe.com/',
+  'https://edge-js.stripe.com',
   'https://api.mapbox.com/'
 ];
 const scriptSrcElem = [
   'https://api.mapbox.com/',
   'https://js.stripe.com/',
+  'https://edge-js.stripe.com',
   'https://checkout.stripe.com/',
   'https://js.stripe.com/'
 ];
