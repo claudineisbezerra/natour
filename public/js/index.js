@@ -63,6 +63,7 @@ if (userPasswordForm)
 if (bookBtn)
   bookBtn.addEventListener('click', e => {
     e.target.textContent = 'Processing...';
+    // showAlert('error', 'INIBIDO PARA TESTE STRIPE', 20);
     const { tourId } = e.target.dataset;
     bookTour(tourId);
   });

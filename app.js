@@ -49,78 +49,133 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers - Advanced configuration to avoid problems with mapbox and login at development
 const defaultSrc = [
-  'https://*.mapbox.com/',
-  'https://*.stripe.com'
+  'https:',
+  'https://*.stripe.com/',
+  'https://*.mapbox.com/'
 ];
 const scriptSrc = [
-  'http://*',
-  'https://api.mapbox.com/',
-  'https://checkout.stripe.com',
-  'https://api.stripe.com',
-  'https://js.stripe.com',
-  'https://edge-js.stripe.com'
+  'https://js.stripe.com/',
+  'https://checkout.stripe.com/',
+  'https://js.stripe.com/',
+  'https://api.mapbox.com/'
 ];
 const scriptSrcElem = [
-  'http://*',
   'https://api.mapbox.com/',
-  'https://checkout.stripe.com',
-  'https://api.stripe.com',
-  'https://js.stripe.com',
-  'https://edge-js.stripe.com'
-]
+  'https://js.stripe.com/',
+  'https://checkout.stripe.com/',
+  'https://js.stripe.com/'
+];
+
 const styleSrc = [
-  'http://*',
   'https://api.mapbox.com/',
   'https://fonts.googleapis.com/'
 ];
 const connectSrc = [
-  'https://checkout.stripe.com',
-  'https://api.stripe.com',
-  'https://js.stripe.com',
-  'https://edge-js.stripe.com',
+  'https://js.stripe.com/',
+  'https://checkout.stripe.com/',
+  'https://api.stripe.com/',
   'https://*.mapbox.com/',
   'http://127.0.0.1:*/',
-  'ws://127.0.0.1:*',
-  'http://localhost:*/',
-  'ws://localhost:*'  
+  'ws://127.0.0.1:*/'
 ];
 const imgSrc = [
   'https://*.stripe.com'
-];
-const frameSrc = [
-  'https://checkout.stripe.com',
-  'https://js.stripe.com',
-  'https://hooks.stripe.com'
 ];
 const fontSrc = [
   'fonts.googleapis.com', 
   'fonts.gstatic.com'
 ];
-
+const frameSrc = [
+  'https://js.stripe.com',
+  'https://hooks.stripe.com'
+];
 app.use(
   helmet  
   .contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", 'data:', 'gap:', ...defaultSrc],
+      defaultSrc: ["'self'", ...defaultSrc],
       baseUri: ["'self'"],
       connectSrc: ["'self'", ...connectSrc],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrc],
-      scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrcElem],
-      styleSrc: ["'self'", 'http://*', "'unsafe-inline'", ...styleSrc],
+      scriptSrc: ["'self'",  "'unsafe-inline'", ...scriptSrc],
+      scriptSrcElem: ["'self'", "'unsafe-inline'", ...scriptSrcElem],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'", ...styleSrc],
       workerSrc: ["'self'", 'blob:'],
       objectSrc: ["'none'"],
       imgSrc: ["'self'", 'blob:', 'data:', ...imgSrc],
-      fontSrc: ["'self'", ...fontSrc],
-      frameSrc: ["'self'",...frameSrc]
+      frameSrc: ["'self'",...frameSrc],
+      fontSrc: ["'self'", 'https:', 'data:', ...fontSrc]
     },
   })
 );
 
 
-// Set security HTTP headers - Base configuration - for production
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(helmet());
-// }
+// const defaultSrc = [
+//   'https://*.mapbox.com/',
+//   'https://*.stripe.com'
+// ];
+// const scriptSrc = [
+//   'http://*',
+//   'https://api.mapbox.com/',
+//   'https://checkout.stripe.com',
+//   'https://api.stripe.com',
+//   'https://js.stripe.com',
+//   'https://edge-js.stripe.com'
+// ];
+// const scriptSrcElem = [
+//   'http://*',
+//   'https://api.mapbox.com/',
+//   'https://checkout.stripe.com',
+//   'https://api.stripe.com',
+//   'https://js.stripe.com',
+//   'https://edge-js.stripe.com'
+// ]
+// const styleSrc = [
+//   'http://*',
+//   'https://api.mapbox.com/',
+//   'https://fonts.googleapis.com/'
+// ];
+// const connectSrc = [
+//   'https://checkout.stripe.com',
+//   'https://api.stripe.com',
+//   'https://js.stripe.com',
+//   'https://edge-js.stripe.com',
+//   'https://*.mapbox.com/',
+//   'http://127.0.0.1:*/',
+//   'ws://127.0.0.1:*',
+//   'http://localhost:*/',
+//   'ws://localhost:*'  
+// ];
+// const imgSrc = [
+//   'https://*.stripe.com'
+// ];
+// const frameSrc = [
+//   'https://checkout.stripe.com',
+//   'https://js.stripe.com',
+//   'https://hooks.stripe.com'
+// ];
+// const fontSrc = [
+//   'fonts.googleapis.com', 
+//   'fonts.gstatic.com'
+// ];
+
+// app.use(
+//   helmet  
+//   .contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'", 'data:', 'gap:', ...defaultSrc],
+//       baseUri: ["'self'"],
+//       connectSrc: ["'self'", ...connectSrc],
+//       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrc],
+//       scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...scriptSrcElem],
+//       styleSrc: ["'self'", 'http://*', "'unsafe-inline'", ...styleSrc],
+//       workerSrc: ["'self'", 'blob:'],
+//       objectSrc: ["'none'"],
+//       imgSrc: ["'self'", 'blob:', 'data:', ...imgSrc],
+//       fontSrc: ["'self'", ...fontSrc],
+//       frameSrc: ["'self'",...frameSrc]
+//     },
+//   })
+// );
 
 
 // Development logging
