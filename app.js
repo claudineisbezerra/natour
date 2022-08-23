@@ -76,6 +76,7 @@ const connectSrc = [
   'https://js.stripe.com/',
   'https://checkout.stripe.com/',
   'https://api.stripe.com/',
+  'https://edge-js.stripe.com',
   'https://*.mapbox.com/',
   'http://127.0.0.1:*/',
   'ws://127.0.0.1:*/',
