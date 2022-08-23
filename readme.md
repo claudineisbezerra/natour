@@ -12,7 +12,7 @@ Built using modern technologies: node.js, express, mongoDB, mongoose and friends
 
 ## Task List
 
-- [ ] Start using express.raw()
+- [x] Start using express.raw()
 - [ ] Implement restriction that users can only review a tour that they have actually booked;
 - [ ] Implement nested booking routes: /tours/:id/bookings and /users/:id/bookings;
 - [ ] Improve tour dates: add a participants and a soldOut field to each date.

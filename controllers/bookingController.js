@@ -38,7 +38,6 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     ]
   });
 
-
   // 3) Create session as response
   res.status(200).json({
     status: 'success',
@@ -53,9 +52,29 @@ const createBookingCheckout = async session => {
   await Booking.create({ tour, user, price });
 };
 
-exports.webhookCheckout = (req, res, next) => {
-  const signature = req.headers['stripe-signature'];
+const generateManualStripeSignature = async session => {
+  const tour = session.client_reference_id;
+  const user = (await User.findOne({ email: session.customer_email })).id;
+  const price = session.display_items[0].amount / 100;
+  await Booking.create({ tour, user, price });
+};
 
+exports.webhookCheckout = (req, res, next) => {
+   let signature;
+  if (req.headers['stripe-signature']) {
+    // Get stripe-signature from header
+    signature = req.headers['stripe-signature'];
+    console.log(`AUTO: ${signature}`)
+  } else {
+    // Manually create stripe-signature for testing
+    signature = stripe.webhooks.generateTestHeaderString({
+      payload: JSON.stringify(req.body, null, 2),
+      secret: process.env.STRIPE_WEBHOOK_SECRET
+    });
+    console.log(`MANUAL: ${signature}`)
+  }
+  // console.log(signature)
+  // const signature = req.headers['stripe-signature'];
   let event;
   try {
     event = stripe.webhooks.constructEvent(
