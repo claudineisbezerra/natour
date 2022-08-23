@@ -76,7 +76,9 @@ const connectSrc = [
   'https://api.stripe.com/',
   'https://*.mapbox.com/',
   'http://127.0.0.1:*/',
-  'ws://127.0.0.1:*/'
+  'ws://127.0.0.1:*/',
+  'ws://tranquil-dawn-87413.herokuapp.com:*/',
+  'wss://tranquil-dawn-87413.herokuapp.com:*/'
 ];
 const imgSrc = [
   'https://*.stripe.com'
