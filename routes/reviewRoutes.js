@@ -10,8 +10,9 @@ router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.restrictTo('user'),
+    authController.restrictToRoles('user', 'admin'),
     reviewController.setTourUserIds,
+    reviewController.restrictToReviewMyBookedTours,
     reviewController.createReview
   );
 
@@ -19,11 +20,15 @@ router
   .route('/:id')
   .get(reviewController.getReview)
   .patch(
-    authController.restrictTo('user', 'admin'),
+    authController.restrictToRoles('user', 'admin'),
+    reviewController.setTourUserIds,
+    reviewController.restrictToReviewMyBookedTours,
     reviewController.updateReview
   )
   .delete(
-    authController.restrictTo('user', 'admin'),
+    authController.restrictToRoles('user', 'admin'),
+    reviewController.setTourUserIds,
+    reviewController.restrictToReviewMyBookedTours,
     reviewController.deleteReview
   );
 

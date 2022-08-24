@@ -103,7 +103,7 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.getUser = factory.getOne(User);
+exports.getUser = factory.getOneById(User);
 exports.getAllUsers = factory.getAll(User);
 
 // Do NOT update passwords with this!

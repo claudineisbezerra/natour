@@ -5,11 +5,7 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
-exports.getCheckoutSession = catchAsync(async (req, res, next) => {
-  // console.log('getCheckoutSession (req cookies) FROM STRIPE');
-  // console.log(req.cookies);
-  // console.log(req.signedCookies);
-
+exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // console.log(tour);
@@ -52,14 +48,7 @@ const createBookingCheckout = async session => {
   await Booking.create({ tour, user, price });
 };
 
-const generateManualStripeSignature = async session => {
-  const tour = session.client_reference_id;
-  const user = (await User.findOne({ email: session.customer_email })).id;
-  const price = session.display_items[0].amount / 100;
-  await Booking.create({ tour, user, price });
-};
-
-exports.webhookCheckout = (req, res, next) => {
+exports.webhookStripeCheckout = (req, res, next) => {
    let signature;
   if (req.headers['stripe-signature']) {
     // Get stripe-signature from header
@@ -94,7 +83,7 @@ exports.webhookCheckout = (req, res, next) => {
 };
 
 exports.createBooking = factory.createOne(Booking);
-exports.getBooking = factory.getOne(Booking);
+exports.getBooking = factory.getOneById(Booking);
 exports.getAllBookings = factory.getAll(Booking);
 exports.updateBooking = factory.updateOne(Booking);
 exports.deleteBooking = factory.deleteOne(Booking);

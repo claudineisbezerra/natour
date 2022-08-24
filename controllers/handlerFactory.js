@@ -47,10 +47,35 @@ exports.createOne = Model =>
     });
   });
 
-exports.getOne = (Model, popOptions) =>
+exports.getOneById = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);
-    if (popOptions) query = query.populate(popOptions);
+    if (populateOptions) query = query.populate(populateOptions);
+    const doc = await query;
+
+    if (!doc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: doc
+      }
+    });
+  });
+
+  // Todo Needs to include validations for parameters
+  // Not FINISHED
+  exports.getOneByAny = (Model, findOptions, populateOptions) =>
+  catchAsync(async (req, res, next) => {
+    if (!findOptions) {
+      return next(new AppError('No findOptions set. \n At least one findOptions is required', 400));
+    }
+
+    let query;
+    if (findOptions) query = Model.findOne(findOptions);
+    if (populateOptions) query = query.populate(populateOptions);
     const doc = await query;
 
     if (!doc) {
