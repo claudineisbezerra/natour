@@ -37,6 +37,12 @@ exports.updateOne = Model =>
 
 exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
+    console.log('createOne req.body:')
+    console.log(req.body)
+
+    console.log('createOne req.params:')
+    console.log(req.params)
+
     const doc = await Model.create(req.body);
 
     res.status(201).json({
@@ -67,14 +73,14 @@ exports.getOneById = (Model, populateOptions) =>
 
   // Todo Needs to include validations for parameters
   // Not FINISHED
-  exports.getOneByAny = (Model, findOptions, populateOptions) =>
+  exports.getOneByAny = (Model, filter, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    if (!findOptions) {
-      return next(new AppError('No findOptions set. \n At least one findOptions is required', 400));
+    if (!filter) {
+      return next(new AppError('No findOptions set. \n At least one filter is required', 400));
     }
 
     let query;
-    if (findOptions) query = Model.findOne(findOptions);
+    if (filter) query = Model.findOne(filter);
     if (populateOptions) query = query.populate(populateOptions);
     const doc = await query;
 
@@ -92,9 +98,11 @@ exports.getOneById = (Model, populateOptions) =>
 
 exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
-    // To allow for nested GET reviews on tour (hack)
+    // (hack) To allow for nested GET reviews on tour. Referenced objects in mongoose
+    // (hack) To allow for nested GET users on bookings. Referenced objects in mongoose    
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.userId) filter = { user: req.params.userId };
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()

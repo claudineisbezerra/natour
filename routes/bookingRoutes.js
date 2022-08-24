@@ -2,7 +2,8 @@ const express = require('express');
 const bookingController = require('./../controllers/bookingController');
 const authController = require('./../controllers/authController');
 
-const router = express.Router();
+// { mergeParams: true } is requested to access params in nested routes
+const router = express.Router({ mergeParams: true });
 
 router.use(authController.protect);
 
@@ -13,12 +14,12 @@ router.use(authController.restrictToRoles('admin', 'lead-guide'));
 router
   .route('/')
   .get(bookingController.getAllBookings)
-  .post(bookingController.createBooking);
+  .post(bookingController.setTourUserIds, bookingController.createBooking);
 
 router
   .route('/:id')
   .get(bookingController.getBooking)
-  .patch(bookingController.updateBooking)
-  .delete(bookingController.deleteBooking);
+  .patch(bookingController.setTourUserIds, bookingController.updateBooking)
+  .delete(bookingController.setTourUserIds, bookingController.deleteBooking);
 
 module.exports = router;

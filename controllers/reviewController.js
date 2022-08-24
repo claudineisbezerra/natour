@@ -1,6 +1,6 @@
 const Review = require('./../models/reviewModel');
 const Booking = require('./../models/bookingModel');
-const mongoose = require('mongoose');
+const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 const catchAsync = require('./../utils/catchAsync');
 
@@ -15,9 +15,13 @@ exports.setTourUserIds = (req, res, next) => {
 exports.restrictToReviewMyBookedTours = catchAsync(async (req, res, next) => {
   const userId = req.body.user ? req.body.user : req.user.id
   const tourId = req.body.tour ? req.body.tour : req.params.tourId
-  const findOptions = {tour: mongoose.Types.ObjectId(tourId), user:  mongoose.Types.ObjectId(userId)};
 
-  let query = Booking.findOne(findOptions);
+  // To allow for nested GET reviews on tour (hack).
+  // Referenced objects in mongoose
+  let filter = {};
+  filter = { tour: tourId, user:  userId};
+
+  let query = Booking.findOne(filter);
   const doc = await query;
 
   if (!doc) {

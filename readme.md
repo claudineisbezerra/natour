@@ -4,38 +4,11 @@ Built using modern technologies: node.js, express, mongoDB, mongoose and friends
 
 ## Table of Contents
 
-- [Task List](#task-list)
 - [Installing](#installing)
 - [Database](#database)
 - [Environment Variables](#environment-variables)
 - [Deployment](#deployment)
-
-## Task List
-
-- [x] 23/08/2022: Start using express.raw();
-- [x] 24/08/2022: Implement restriction that users can only review (Create/Update/Delete) a tour that they have actually booked;
-- [ ] Implement nested booking routes: /tours/:id/bookings and /users/:id/bookings;
-- [ ] Improve tour dates: add a participants and a soldOut field to each date.
-      A date then becomes like an instance of the tour.
-      Then, when a user books, they need to select one of the dates.
-      A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
-      So, when a user wants to book, you need to check if tour on the selected date is still available;
-- [ ] Implement advanced authentication features: confirm user email, keep users logged in with refresh tokens, two-factor
-      authentication, etc.
-- [ ] Implement a sign up from, similar to the login form;
-- [ ] On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
-      Implement a form for this;
-- [ ] Hide the entire booking section on the tour detail page if current user has already booked the tour
-      (also prevent duplicate bookings on the model);
-- [ ] Implement “like tour” functionality, with favourite tour page;
-- [ ] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them.
-      (If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!);
-- [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours,
-      users, reviews, and bookings.
-- [ ] Separate frontend and backend projects
-- [ ] Start using docker for the app
-- [ ] Automate deployment for the app
-- [ ] Add unit and system test to the app
+- [Ongoing Task List](#ongoing-task-list)
 
 ## Installing
 
@@ -130,3 +103,30 @@ Install App on Heroku
 git remote -v
 git push heroku master
 ```
+
+## Ongoing Task List
+
+- [x] 23/08/2022: Start using express.raw();
+- [x] 24/08/2022: Implement restriction that users can only review (Create/Update/Delete) a tour that they have actually booked;
+- [x] 24/08/2022: Implement nested booking routes: /tours/:id/bookings and /users/:id/bookings;
+- [ ] Improve tour dates: add a participants and a soldOut field to each date.
+      A date then becomes like an instance of the tour.
+      Then, when a user books, they need to select one of the dates.
+      A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
+      So, when a user wants to book, you need to check if tour on the selected date is still available;
+- [ ] Implement advanced authentication features: confirm user email, keep users logged in with refresh tokens, two-factor
+      authentication, etc.
+- [ ] Implement a sign up from, similar to the login form;
+- [ ] On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
+      Implement a form for this;
+- [ ] Hide the entire booking section on the tour detail page if current user has already booked the tour
+      (also prevent duplicate bookings on the model);
+- [ ] Implement “like tour” functionality, with favourite tour page;
+- [ ] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them.
+      (If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!);
+- [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours,
+      users, reviews, and bookings.
+- [ ] Separate frontend and backend projects
+- [ ] Start using docker for the app
+- [ ] Automate deployment for the app
+- [ ] Add unit and system test to the app
