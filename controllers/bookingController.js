@@ -1,9 +1,12 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const Tour = require('../models/tourModel');
-const User = require('../models/userModel');
-const Booking = require('../models/bookingModel');
-const catchAsync = require('../utils/catchAsync');
+const Tour = require('./../models/tourModel');
+const User = require('./../models/userModel');
+const Booking = require('./../models/bookingModel');
+const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
+const mongoose = require('mongoose');
+const AppError = require('./../utils/appError');
+
 
 exports.setTourUserIds = (req, res, next) => {
   // Allow nested routes
@@ -12,6 +15,44 @@ exports.setTourUserIds = (req, res, next) => {
   next();
 };
 
+exports.checkBookingRules = catchAsync(async (req, res, next) => {
+  const tourId = req.body.tour;
+  const tourStartDate = req.body.tourStartDate;
+
+  const checkedObj = await Tour.aggregate([
+    {
+      $match: { _id: mongoose.Types.ObjectId(tourId) }
+    },
+    {
+      $project: {
+        _id: 0,
+        startDates: 1,
+        maxGroupSize: 1
+      }
+    },
+    {
+      $unwind: '$startDates'
+    },
+    {
+      $match: { 'startDates.startDate': new Date(tourStartDate) } 
+    },
+    {
+      $project: {
+        _id: 0,
+        startDate: "$startDates.startDate",
+        maxGroupSize: 1,
+        numberOfParticipants: { $cond: { if: { $isArray: "$startDates.participants" }, then: { $size: "$startDates.participants" }, else: 0} }
+      }
+   }
+  ]);
+
+  if (checkedObj[0].numberOfParticipants >= checkedObj[0].maxGroupSize) {
+    return next(
+      new AppError('The tour has no vacancies for this date. The group is at full capacity.', 409)
+    );
+  }
+  next();
+});
 
 exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour

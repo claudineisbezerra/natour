@@ -75,7 +75,24 @@ const tourSchema = new mongoose.Schema(
       default: Date.now(),
       select: false
     },
-    startDates: [Date],
+    startDates: [
+      {
+        startDate: {
+          type: Date,
+          required: [true, 'A tour must have a start date']
+        },
+        participants: [
+          {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+          }
+        ],
+        soldOut: {
+          type: Boolean,
+          default: false
+        }
+      }
+    ],
     secretTour: {
       type: Boolean,
       default: false
@@ -133,6 +150,14 @@ tourSchema.virtual('reviews', {
   localField: '_id'
 });
 
+// Virtual populate
+tourSchema.virtual('numberOfParticipants', {
+  ref: 'Booking',
+  foreignField: 'tour',
+  localField: '_id',
+  count: true
+});
+
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
@@ -169,7 +194,6 @@ tourSchema.pre(/^find/, function(next) {
     path: 'guides',
     select: '-__v -passwordChangedAt'
   });
-
   next();
 });
 

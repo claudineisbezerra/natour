@@ -83,19 +83,23 @@ reviewSchema.statics.calcAverageRatings = async function(tourId) {
 
 reviewSchema.post('save', function() {
   // this points to current review
+  // Needs to use 'constructor' to access static methods
   this.constructor.calcAverageRatings(this.tour);
 });
 
 // findByIdAndUpdate
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function(next) {
+  //this.r is the 'review' object made available by the query been executed here before any change
   this.r = await this.findOne();
   // console.log(this.r);
   next();
 });
 
+
 reviewSchema.post(/^findOneAnd/, async function() {
-  // await this.findOne(); does NOT work here, query has already executed
+  // await this.findOne(); does NOT work here, query has been already executed
+  // This trick passes data from PRE to POST middleware
   await this.r.constructor.calcAverageRatings(this.r.tour);
 });
 

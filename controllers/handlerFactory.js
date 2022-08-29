@@ -39,12 +39,12 @@ exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
     console.log('createOne req.body:')
     console.log(req.body)
-
     console.log('createOne req.params:')
     console.log(req.params)
 
-    const doc = await Model.create(req.body);
 
+
+    const doc = await Model.create(req.body);
     res.status(201).json({
       status: 'success',
       data: {
@@ -96,19 +96,25 @@ exports.getOneById = (Model, populateOptions) =>
     });
   });
 
-exports.getAll = Model =>
+exports.getAll = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
     // (hack) To allow for nested GET reviews on tour. Referenced objects in mongoose
     // (hack) To allow for nested GET users on bookings. Referenced objects in mongoose    
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
     if (req.params.userId) filter = { user: req.params.userId };
+    const options = populateOptions;
 
-    const features = new APIFeatures(Model.find(filter), req.query)
+    const features = new APIFeatures(Model.find(filter), req.query, options)
       .filter()
       .sort()
       .limitFields()
-      .paginate();
+      .paginate()
+      .populate();
+    
+    console.log('getAll features');
+    console.log(features);
+
     // const doc = await features.query.explain();
     const doc = await features.query;
 

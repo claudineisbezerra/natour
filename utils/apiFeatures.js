@@ -1,7 +1,8 @@
 class APIFeatures {
-  constructor(query, queryString) {
+  constructor(query, queryString, populateOptions) {
     this.query = query;
     this.queryString = queryString;
+    this.populateOptions  = populateOptions;
   }
 
   filter() {
@@ -47,6 +48,13 @@ class APIFeatures {
 
     this.query = this.query.skip(skip).limit(limit);
 
+    return this;
+  }
+
+  populate() {
+    if (this.populateOptions){
+      this.query = this.query.populate(this.populateOptions);
+    }
     return this;
   }
 }

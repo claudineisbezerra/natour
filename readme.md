@@ -109,7 +109,7 @@ git push heroku master
 - [x] 23/08/2022: Start using express.raw();
 - [x] 24/08/2022: Implement restriction that users can only review (Create/Update/Delete) a tour that they have actually booked;
 - [x] 24/08/2022: Implement nested booking routes: /tours/:id/bookings and /users/:id/bookings;
-- [ ] Improve tour dates: add a participants and a soldOut field to each date.
+- [x] Improve tour dates: add a participants and a soldOut field to each date.
       A date then becomes like an instance of the tour.
       Then, when a user books, they need to select one of the dates.
       A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
