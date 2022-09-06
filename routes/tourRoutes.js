@@ -1,6 +1,6 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController');
-const authController = require('./../controllers/authController');
+const { authJwt } = require('./../middlewares');
 const reviewRouter = require('./../routes/reviewRoutes');
 const bookingRouter = require('./../routes/bookingRoutes');
 
@@ -24,8 +24,8 @@ router.route('/tour-stats').get(tourController.getTourStats);
 router
   .route('/monthly-plan/:year')
   .get(
-    authController.protect,
-    authController.restrictToRoles('admin', 'lead-guide', 'guide'),
+    authJwt.verifyToken,
+    authJwt.restrictToRoles('admin', 'lead-guide', 'guide'),
     tourController.getMonthlyPlan
   );
 
@@ -41,8 +41,8 @@ router
   .route('/')
   .get(tourController.getAllTours)
   .post(
-    authController.protect,
-    authController.restrictToRoles('admin', 'lead-guide'),
+    authJwt.verifyToken,
+    authJwt.restrictToRoles('admin', 'lead-guide'),
     tourController.createTour
   );
 
@@ -50,8 +50,8 @@ router
   .route('/:id')
   .get(tourController.getTour)
   .patch(
-    authController.protect,
-    authController.restrictToRoles('admin', 'lead-guide'),
+    authJwt.verifyToken,
+    authJwt.restrictToRoles('admin', 'lead-guide'),
     tourController.uploadTourImages,
     tourController.resizeTourImages,
     tourController.updateTour

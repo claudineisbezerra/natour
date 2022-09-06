@@ -1,15 +1,17 @@
 const express = require('express');
 const bookingController = require('./../controllers/bookingController');
-const authController = require('./../controllers/authController');
+const { authJwt } = require('./../middlewares');
 
 // { mergeParams: true } is requested to access params in nested routes
 const router = express.Router({ mergeParams: true });
 
-router.use(authController.protect);
+// Check if accessToken remains valid and set global authenticated user.
+// all routes after this middleware
+router.use(authJwt.verifyToken);
 
 router.get('/checkout-session/:tourId', bookingController.getStripeCheckoutSession);
 
-router.use(authController.restrictToRoles('admin', 'lead-guide'));
+router.use(authJwt.restrictToRoles('admin', 'lead-guide'));
 
 router
   .route('/')

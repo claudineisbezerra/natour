@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "630f62f032b19e35b8b920d2",
+    "name": "user"
+  },
+  {
+    "_id": "630f62f032b19e35b8b920d3",
+    "name": "admin"
+  },
+  {
+    "_id": "630f62f032b19e35b8b920d4",
+    "name": "guide"
+  },
+  {
+    "_id": "630f62f032b19e35b8b920d5",
+    "name": "lead-guide"
+  }
+]

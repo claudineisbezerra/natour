@@ -16,8 +16,19 @@ exports.setTourUserIds = (req, res, next) => {
 };
 
 exports.checkBookingRules = catchAsync(async (req, res, next) => {
+  if (!req.body.tour){
+    return next(
+      new AppError('You must provide tourId.', 409)
+    );
+  }
+  if (!req.body.tourStartDate){
+    return next(
+      new AppError('You must provide tourStartDate.', 409)
+    );
+  }
   const tourId = req.body.tour;
   const tourStartDate = req.body.tourStartDate;
+
 
   const checkedObj = await Tour.aggregate([
     {

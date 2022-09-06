@@ -7,7 +7,7 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Jonas Schmedtmann <${process.env.EMAIL_FROM}>`;
+    this.from = `${process.env.EMAIL_NAME_FROM} <${process.env.EMAIL_FROM}>`;
   }
 
   newTransport() {
@@ -59,9 +59,13 @@ module.exports = class Email {
   }
 
   async sendPasswordReset() {
-    await this.send(
-      'passwordReset',
-      'Your password reset token (valid for only 10 minutes)'
+    await this.send('passwordReset','Your password reset token (valid for only 10 minutes)'
     );
   }
+
+  async sendVerifyUserAccount() {
+    await this.send('verifyUserAccount','Please confirm your user account before start using the system (valid for 30 days)'
+    );
+  }
+
 };

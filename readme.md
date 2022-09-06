@@ -58,9 +58,9 @@ PORT=3000
 DATABASE=mongodb+srv://<USER>:<PASSWORD>@cluster0.gozquzy.mongodb.net/natours?retryWrites=true
 DATABASE_LOCAL=mongodb://localhost:27017/natours
 DATABASE_PASSWORD=<PASSWORD>
-JWT_SECRET=my-ultra-secure-and-ultra-long-secret
-JWT_EXPIRES_IN=90d
-JWT_COOKIE_EXPIRES_IN=90
+JWT_ACCESS_SECRET=my-ultra-secure-and-ultra-long-secret
+JWT_ACCESS_TOKEN_EXPIRES_IN=90d
+JWT_REFRESH_TOKEN_EXPIRES_IN=90
 
 //mailtrap for testing
 EMAIL_USERNAME=<USER KEY>
@@ -114,9 +114,11 @@ git push heroku master
       Then, when a user books, they need to select one of the dates.
       A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
       So, when a user wants to book, you need to check if tour on the selected date is still available;
-- [ ] Implement advanced authentication features: confirm user email, keep users logged in with refresh tokens, two-factor
-      authentication, etc.
-- [ ] Implement a sign up from, similar to the login form;
+- [ ] Implement advanced authentication features:
+      30/08/2022: confirm user email,
+      06/09/2022: keep users logged in with refresh tokens,
+      two-factor authentication, etc.
+- [ ] Implement a sign up form, similar to the login form;
 - [ ] On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
       Implement a form for this;
 - [ ] Hide the entire booking section on the tour detail page if current user has already booked the tour

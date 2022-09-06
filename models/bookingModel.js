@@ -79,16 +79,6 @@ bookingSchema.statics.updateBookingReference = async function(tourId, userId, to
 
   let options = { arrayFilters: [{"startDates.startDate": new Date(tourStartDate)}] }
 
-  // let tourByDate = await Tour.findOne(conditions, (err) => {
-  //     if (err) {
-  //       console.log('Error:', err)
-  //     } else {
-  //       console.log('Found Tour')
-  //     }
-  //   }
-  // ).clone();
-  // console.log(tourByDate);
-
   Tour.findOneAndUpdate(conditions, update, options, (err) => {
       if (err) {
         console.log('Error:', err)

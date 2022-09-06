@@ -2,34 +2,42 @@ const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
 const bookingRouter = require('./../routes/bookingRoutes');
-
+const { verifySignUp, authJwt } = require('./../middlewares');
 const router = express.Router();
 
-// GET /users/{{userId}}/bookings
-// POST /users/{{userId}}/bookings
-router.use('/:userId/bookings', bookingRouter);
+// ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
+router.get("/test/all", userController.allAccess);
+router.get("/test/user", [authJwt.verifyToken], userController.userBoard);
+router.get("/test/admin", [authJwt.verifyToken, authJwt.isAdmin], userController.adminBoard);
+router.get("/test/guide",  [authJwt.verifyToken, authJwt.isGuide], userController.guideBoard);
+// ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
 
-router.post('/signup', authController.signup);
-router.post('/login', authController.login);
+// GET or POST /users/{{userId}}/bookings
+// router.use('/:userId/bookings', bookingRouter);
+
+router.post('/signup', verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted, authController.signup);
+// Verify user account before logging in
+router.patch('/verify/:verifyToken', authController.verifyUserAccount);
+router.post('/login', authJwt.isAccountVerified, authController.login);
+router.post('/refreshtoken', authController.renewAccessToken);
 router.get('/logout', authController.logout);
 
 router.post('/forgotPassword', authController.forgotPassword);
-router.patch('/resetPassword/:token', authController.resetPassword);
+router.patch('/resetPassword/:accessToken', authController.resetPassword);
 
-// Protect all routes after this middleware
-router.use(authController.protect);
+// Check if accessToken remains valid and set global authenticated user.
+// all routes after this middleware will be affected
+router.use(authJwt.verifyToken);
 
-router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
-router.patch(
-  '/updateMe',
-  userController.uploadUserPhoto,
-  userController.resizeUserPhoto,
-  userController.updateMe
-);
+router.patch('/updateMyPassword', authController.updatePassword);
+router.patch('/updateMe', userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
-router.use(authController.restrictToRoles('admin'));
+// GET or POST /users/{{userId}}/bookings
+router.use('/:userId/bookings', bookingRouter);
+
+router.use(authJwt.restrictToRoles('admin'));
 
 router
   .route('/')

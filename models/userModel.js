@@ -19,11 +19,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'default.jpg'
   },
-  role: {
-    type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
-    default: 'user'
-  },
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role"
+    }
+  ],
+  // role: {
+  //   type: String,
+  //   enum: ['user', 'guide', 'lead-guide', 'admin'],
+  //   default: 'user'
+  // },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
@@ -44,29 +50,58 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  verified: {
+    type: Boolean,
+    default: false
+  },
+  verifiedAt: {
+    type: Date,
+    select: false
+  },
+  verifyToken: {
+    type: String,
+    select: false
+  },
+  verifyExpires: {
+    type: Date,
+    select: false
+  },
+  verifyNotHashedToken: {
+    type: String
+  },
   active: {
     type: Boolean,
     default: true,
     select: false
-  }
+  },
 });
 
 userSchema.pre('save', async function(next) {
+  // this middleware is expected to run only on creation of NEW USERs
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
-
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
-
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
+
+  //Generates account verification token only if 
+  if (this.isNew) {
+    this.createVerifyToken()
+  }
   next();
 });
 
 userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
-
+  // Invalidates valid password time
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// Populates role reference object after creation
+userSchema.post('save', async function(doc, next) {
+  this.populate({path: 'roles', select: '-__v' });
   next();
 });
 
@@ -76,20 +111,17 @@ userSchema.pre(/^find/, function(next) {
   next();
 });
 
-userSchema.methods.correctPassword = async function(
-  candidatePassword,
-  userPassword
-) {
+userSchema.methods.IsValidPassword = async function(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
+userSchema.methods.isAccountVerified = async function(email) {
+  return this.verified;
+};
 
+userSchema.methods.changedPasswordAfterIssuedAccessToken = function(JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10 );
     return JWTTimestamp < changedTimestamp;
   }
 
@@ -98,18 +130,22 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 };
 
 userSchema.methods.createPasswordResetToken = function() {
-  const resetToken = crypto.randomBytes(32).toString('hex');
-
-  this.passwordResetToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-
-  // console.log({ resetToken }, this.passwordResetToken);
-
+  const pwdResetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto.createHash('sha256').update(pwdResetToken).digest('hex');
+  // Expires in 10 minutes
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
-  return resetToken;
+  return pwdResetToken;
+};
+
+userSchema.methods.createVerifyToken = function() {
+  const notHashedToken = crypto.randomBytes(32).toString('hex');
+  this.verifyNotHashedToken = notHashedToken;
+  this.verifyToken = crypto.createHash('sha256').update(notHashedToken).digest('hex');
+  // Expires in 30 days = 43220 minutes
+  this.verifyExpires = Date.now() + 43220 * 60 * 1000;
+
+  return notHashedToken;
 };
 
 const User = mongoose.model('User', userSchema);

@@ -42,8 +42,6 @@ exports.createOne = Model =>
     console.log('createOne req.params:')
     console.log(req.params)
 
-
-
     const doc = await Model.create(req.body);
     res.status(201).json({
       status: 'success',
@@ -112,9 +110,6 @@ exports.getAll = (Model, populateOptions) =>
       .paginate()
       .populate();
     
-    console.log('getAll features');
-    console.log(features);
-
     // const doc = await features.query.explain();
     const doc = await features.query;
 
