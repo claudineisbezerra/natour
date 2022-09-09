@@ -15,8 +15,9 @@ checkDuplicateUsernameOrEmail = catchAsync(async (req, res, next) => {
 });
 
 checkRolesExisted = catchAsync(async (req, res, next) => {
+  let roles = [];
   if (!req.body.roles || req.body.roles.length <= 0) {
-    return next(new AppError('Missing roles parameter. Please inform your roles!', 400));
+    roles[0] = process.env.DEFAULT_USER_ROLE;
   }
 
   const ROLES = await loadData.getRoles();
@@ -24,10 +25,10 @@ checkRolesExisted = catchAsync(async (req, res, next) => {
     return next(new AppError('ROLE misconfiguration. Please validate your database content!', 400));
   }
 
-  if (req.body.roles) {
-    for (let i = 0; i < req.body.roles.length; i++) {
-      if (!ROLES.includes(req.body.roles[i])) {
-        return next(new AppError(`Role \"${req.body.roles[i]}\" does not exist!`, 400));
+  if (roles) {
+    for (let i = 0; i < roles.length; i++) {
+      if (!ROLES.includes(roles[i])) {
+        return next(new AppError(`Role \"${roles[i]}\" does not exist!`, 400));
       }
     }
     next();

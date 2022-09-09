@@ -149,7 +149,7 @@ isAccountVerified = async (req, res, next) => {
   }
 
   if (!await user.isAccountVerified()) {
-    return next(new AppError('User Account not verified. Please confirm your account before logging in', 401));
+    return next(new AppError('User Account not verified. Please activate your account before logging in', 401));
   }
 
   return next();

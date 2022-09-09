@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
@@ -6,9 +7,10 @@ const AppError = require('../utils/appError');
 
 exports.alerts = (req, res, next) => {
   const { alert } = req.query;
-  if (alert === 'booking')
+  if (alert === 'booking') {
     res.locals.alert =
       "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediatly, please come back later.";
+  }
   next();
 };
 
@@ -36,7 +38,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   }
 
   // 2) Build template
-  // 3) Render template using data from 1)
+  // 3) Render template using data from step 1)
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
     tour
@@ -48,6 +50,53 @@ exports.getLoginForm = (req, res) => {
     title: 'Log into your account'
   });
 };
+
+exports.getSignupForm = (req, res) => {
+  res.status(200).render('signup', {
+    title: 'Sign Up for your account'
+  });
+};
+
+// DIRECT HTTP CALL to verify user account by email link before logging in
+exports.verifyUserAccount = catchAsync(async (req, res, next) => {
+  // 1) Get the data, for the requested verification
+  const verifyNotHashedToken = req.params.verifyToken;
+  if (!verifyNotHashedToken ) {
+    return next(new AppError('Please provide valid Verification Token!', 400));
+  }
+
+  let firstName;
+  try {
+    // 2) Get user based on the verifyNotHashedToken
+    const verifyHashedToken = crypto.createHash('sha256').update(verifyNotHashedToken).digest('hex');
+
+    // 3) Check if user exists and verifyToken is valid
+    const conditions = {'verifyToken': verifyHashedToken, 'verifyExpires': { $gt: Date.now() }};
+    const user = await User.findOne(conditions).select('+verifyToken').populate({path: 'roles',select: '-__v'});
+
+    // 4) If verifyToken has not expired, and there is user, validate user account
+    if (!user) {
+      return next(new AppError('Verification Token is invalid or has expired', 400));
+    }
+
+    user.verified = true;
+    user.verifiedAt = Date.now();
+    user.verifyToken = undefined;
+    user.verifyExpires = undefined;
+    user.verifyNotHashedToken = undefined;
+
+    firstName = user.name.split(' ')[0];
+    await user.save({ validateBeforeSave: false });
+  } catch (err) {
+    return next(new AppError(err, 500));
+  }
+
+  res.status(200).render('login', {
+    title: 'Log into your account',
+    alert: `Congrats ${firstName}. \n Your account was successfully activated. \n Please Log into your account.`
+  });
+
+});
 
 exports.getAccount = (req, res) => {
   res.status(200).render('account', {

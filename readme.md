@@ -63,10 +63,10 @@ JWT_ACCESS_TOKEN_EXPIRES_IN=90d
 JWT_REFRESH_TOKEN_EXPIRES_IN=90
 
 //mailtrap for testing
-EMAIL_USERNAME=<USER KEY>
-EMAIL_PASSWORD=<PASSWORD KEY>
-EMAIL_HOST=smtp.mailtrap.io
-EMAIL_PORT=2525
+EMAIL_USERNAME_MAILTRAP=<USER KEY>
+EMAIL_PASSWORD_MAILTRAP=<PASSWORD KEY>
+EMAIL_HOST_MAILTRAP=smtp.mailtrap.io
+EMAIL_PORT_MAILTRAP=2525
 
 //Email shadow for testing
 EMAIL_FROM=myemail@mailsac.com
@@ -118,7 +118,8 @@ git push heroku master
       30/08/2022: confirm user email.
       06/09/2022: keep users logged in with refresh tokens.
       09/09/2022: two-factor authentication.
-- [ ] Implement a sign up form, similar to the login form;
+- [x] 09/09/2022: Implement a sign up form, similar to the login form;
+- [x] 09/09/2022: Create verification endpoint to activate account;
 - [ ] On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
       Implement a form for this;
 - [ ] Hide the entire booking section on the tour detail page if current user has already booked the tour

@@ -5,18 +5,15 @@ const bookingRouter = require('./../routes/bookingRoutes');
 const { verifySignUp, authJwt } = require('./../middlewares');
 const router = express.Router();
 
-// ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
-
-
-
-// ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
-
 // GET or POST /users/{{userId}}/bookings
 // router.use('/:userId/bookings', bookingRouter);
 
 router.post('/signup', verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted, authController.signup);
-// Verify user account by email link before logging in
+
+// API to verify user account by email link before logging in
 router.patch('/verify/:verifyToken', authController.verifyUserAccount);
+
+// Login call
 router.post('/login', authJwt.isAccountVerified, authController.login);
 
 // Authenticate using two factor authentication providing time-based one-time password (TOTP) secret

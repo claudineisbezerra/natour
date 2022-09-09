@@ -29,7 +29,7 @@
   {
     "_id": "5c8a1d5b0190b214360dc057",
     "name": "Admin",
-    "email": "admin@@email.com",
+    "email": "admin@email.com",
     "roles": ["630f62f032b19e35b8b920d3"],
     "active": true,
     "photo": "user-1.jpg",
