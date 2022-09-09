@@ -68,7 +68,6 @@ exports.checkBookingRules = catchAsync(async (req, res, next) => {
 exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
-  // console.log(tour);
 
   // 2) Create checkout session
   const session = await stripe.checkout.sessions.create({
@@ -113,17 +112,13 @@ exports.webhookStripeCheckout = (req, res, next) => {
   if (req.headers['stripe-signature']) {
     // Get stripe-signature from header
     signature = req.headers['stripe-signature'];
-    console.log(`AUTO: ${signature}`)
   } else {
     // Manually create stripe-signature for testing
     signature = stripe.webhooks.generateTestHeaderString({
       payload: JSON.stringify(req.body, null, 2),
       secret: process.env.STRIPE_WEBHOOK_SECRET
     });
-    console.log(`MANUAL: ${signature}`)
   }
-  // console.log(signature)
-  // const signature = req.headers['stripe-signature'];
   let event;
   try {
     event = stripe.webhooks.constructEvent(

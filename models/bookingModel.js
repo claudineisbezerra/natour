@@ -98,8 +98,6 @@ bookingSchema.post('save', function(doc, next) {
 });
 
 bookingSchema.pre('aggregate', function(next) {
-  console.log('PIPELINE');
-  console.log(this.pipeline());
   next();
 });
 

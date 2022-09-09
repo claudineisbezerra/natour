@@ -19,7 +19,7 @@ RefreshTokenSchema.statics.createToken = async function (userId) {
   await this.deleteMany({user: userId});
 
   // Adds process.env.JWT_REFRESH_TOKEN_EXPIRES_IN seconds
-  let expiredAt = new Date().getTime() + process.env.JWT_REFRESH_TOKEN_EXPIRES_IN / 1000;
+  let expiredAt = Math.round((new Date().getTime() / 1000) + (process.env.JWT_REFRESH_TOKEN_EXPIRES_IN / 1000));
   let _token = uuidv4();
   let _object = new this({
     token: _token,
@@ -33,7 +33,7 @@ RefreshTokenSchema.statics.createToken = async function (userId) {
 };
 
 RefreshTokenSchema.statics.verifyExpiration = (token) => {
-  return token.expiryDate.getTime() < new Date().getTime();
+  return token.expiryDate.getTime() < Math.round((new Date().getTime() / 1000));
 }
 
 const RefreshToken = mongoose.model("RefreshToken", RefreshTokenSchema);

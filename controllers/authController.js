@@ -1,26 +1,33 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const twoFactor = require('node-2fa');
 const User = require('./../models/userModel');
 const Role = require('./../models/roleModel');
 const RefreshToken = require('./../models/refreshTokenModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Email = require('./../utils/email');
+const authenticate = require('./../utils/authenticate');
 const { constants } = require('buffer');
 
-// Generate signed accessToken using jsonwebtoken
-const signAccessToken = id => {
-  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN });
-};
-
-const createSendSignedTokens = async (user, statusCode, req, res) => {
+const createSendSignedTokens = async (user, statusCode, aToken, rToken, req, res) => {
   try {
     // 1) Generate signed accessToken using jsonwebtoken
-    const accessToken = signAccessToken(user._id);
+    let accessToken;
+    if(aToken) {
+      accessToken = aToken;
+    } else {
+      accessToken = authenticate.signAccessToken(user._id, user.is2FAEnabled );
+    }
 
     // 2) Generate and persists signed refreshToken using jsonwebtoken
-    const refreshToken = await RefreshToken.createToken(user._id);
+    let refreshToken;
+    if(rToken) {
+      refreshToken = rToken;
+    } else {
+      refreshToken = refreshToken = await RefreshToken.createToken(user._id);
+    }
 
     // 3) Set accessToken cookie valid for  24 hours
     res.cookie('jwt', accessToken, {
@@ -29,7 +36,7 @@ const createSendSignedTokens = async (user, statusCode, req, res) => {
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     });
 
-    // 3.1) Set refreshToken cookie valid for  24 hours
+    // 4) Set refreshToken cookie valid for  24 hours
     // In this scenario, refreshToken is saved in client side cookies only for test reasons
     res.cookie('jwtRefreshToken', refreshToken, {
       expires: new Date(Date.now() + process.env.JWT_REFRESH_TOKEN_EXPIRES_IN * 24 * 60 * 60 * 1000),
@@ -37,20 +44,20 @@ const createSendSignedTokens = async (user, statusCode, req, res) => {
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     });
 
-    // 4) Set list of authorities/roles of the user
+    // 5) Set list of authorities/roles of the user
     let authorities = [];
     for (let i = 0; i < user.roles.length; i++) {
       authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
     }
 
-    // 5) Remove sensitive properties from output
+    // 6) Remove sensitive properties from output
     user.password = undefined;
     user.passwordConfirm = undefined;
     user.verifiedAt = undefined;
     user.verifyToken = undefined;
     user.verifyExpires = undefined;
 
-    // 6) Set return
+    // 7) Set return
     res.status(statusCode).json({
       status: 'success',
       data: {
@@ -72,25 +79,29 @@ exports.renewAccessToken = catchAsync( async (req, res, next) => {
   }
 
   try {
-    let refreshToken = await RefreshToken.findOne({ token: requestToken });
-    if (!refreshToken) {
+    let userRefreshToken = await RefreshToken.findOne({ token: requestToken }).populate("user", "_id is2FAEnabled");
+    if (!userRefreshToken) {
       return next(new AppError('Refresh token is not in database!', 403));
     }
 
-    if (RefreshToken.verifyExpiration(refreshToken)) {
-      await RefreshToken.findByIdAndRemove(refreshToken._id);
+    if (RefreshToken.verifyExpiration(userRefreshToken)) {
+      await RefreshToken.findByIdAndRemove(userRefreshToken._id);
       return next(new AppError('Refresh token was expired. Please make a new signin request!', 403));
     }
-    const newAccessToken = signAccessToken(refreshToken.user._id);
 
-    console.log('renewAccessToken refreshToken: ', refreshToken);
+    // Inverts is2FAEnabled to respect OTP token validity
+    let newAccessToken;
+    if (userRefreshToken.user.is2FAEnabled){
+      newAccessToken = authenticate.signAccessToken(userRefreshToken.user._id, false);
+    } else {
+      newAccessToken = authenticate.signAccessToken(userRefreshToken.user._id, true);
+    }
 
     return res.status(200).json({
       accessToken: newAccessToken,
-      refreshToken: refreshToken.token,
+      refreshToken: userRefreshToken.token,
     });
   } catch (err) {
-    console.log('renewAccessToken ERROR: ', err);
     return next(new AppError(err, 500));
   }
 });
@@ -129,16 +140,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   await new Email(newUser, url).sendVerifyUserAccount();
 
   // 3) Send JWT signed in accessToken to client side
-  createSendSignedTokens(newUser, 201, req, res);
-
-  // 2) Prepare URL to user login the system and update profile
-  // const url = `${req.protocol}://${req.get('host')}/me`;
-  // console.log(url);
-  // await new Email(newUser, url).sendWelcome();
-
-  // 3) Send JWT signed in accessToken to client side
-  // accessToken(newUser, 201, req, res);
-
+  createSendSignedTokens(newUser, 201, null, null, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -155,8 +157,59 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  // 3) If everything ok, send accessToken to client
-  createSendSignedTokens(user, 200, req, res);
+  // 3) If everything ok, set and send tokens to client
+  createSendSignedTokens(user, 200, null, null, req, res);
+
+});
+
+// Authenticate using two factor authentication providing time-based one-time password (TOTP) secret
+exports.loginTOTP = catchAsync(async (req, res, next) => {
+  // 1) Getting params for accessToken and OTP validations
+  const { OTPSecret, OTPToken } = req.body;
+  if (!OTPSecret || !OTPToken) {
+    return next(
+      new AppError('No secret/token provided for verification!', 401)
+    );
+  }
+
+  // 2) Getting params (accessToken)
+  let accessToken = authenticate.getBearerToken(req.headers, req.cookies, next);
+  try {
+
+    // 3) accessToken validation
+    let newTOTPAccessToken;
+    let decoded = await authenticate.validateAccessToken(accessToken, next);
+
+    // 4) 2FA validation and creation of New Access Token
+    if (decoded){
+      if(authenticate.verify2FAToken(OTPSecret, OTPToken).isValid) {
+          decoded.authorized = true;
+          newTOTPAccessToken = authenticate.signTOTPToken(decoded);
+      } else {
+        return next( new AppError('Invalid one-time password (otp) 2FA.', 401));
+      }
+
+      // 5) Check if user still exists
+      const user = await User.findById(decoded.id).populate({path: 'roles',select: '-__v'});
+      if (!user) {
+        return next( new AppError('The user belonging to this accessToken does no longer exist.', 401));
+      }
+
+      // 6) Check if user changed password after the accessToken was issued
+      if (user.changedPasswordAfterIssuedAccessToken(decoded.iat)) {
+        return next(
+          new AppError('User recently changed the password! Please log in again.', 401)
+        );
+      }
+
+      // 7) If everything ok, set and send tokens to client
+      createSendSignedTokens(user, 200, newTOTPAccessToken, null, req, res);
+    }
+  } catch (err) {
+    return next(
+      new AppError(err, 500)
+    );
+  }
 });
 
 exports.logout = (req, res) => {
@@ -174,7 +227,7 @@ exports.isLoggedIn = async (req, res, next) => {
       // 1) verify token
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
-        process.env.JWT_ACCESS_SECRET
+        process.env.JWT_USER_ACCESS_SECRET
       );
 
       // 2) Check if user still exists
@@ -230,7 +283,7 @@ exports.verifyUserAccount = catchAsync(async (req, res, next) => {
   await user.populate('roles');
 
   // 4) Log the user in, send JWT
-  createSendSignedTokens(user, 200, req, res);
+  createSendSignedTokens(user, 200, null, null, req, res);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -287,7 +340,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3) Update changedPasswordAt property for the user
 
   // 4) Log the user in, send JWT
-  createSendSignedTokens(user, 200, req, res);
+  createSendSignedTokens(user, 200, null, null, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -306,5 +359,68 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // User.findByIdAndUpdate will NOT work as intended!
 
   // 4) Log user in, send JWT
-  createSendSignedTokens(user, 200, req, res);
+  createSendSignedTokens(user, 200, null, null, req, res);
 });
+
+exports.generate2FA = (req, res, next) => {
+  const options = {name:req.body.name, account: req.body.account};
+  try {
+    const otp2fa = authenticate.generate2FA(options);
+    return res.status(200).json({
+      otp: otp2fa
+    });
+  } catch (err) {
+    return next(new AppError(err, 500));
+  }
+};
+
+exports.generate2FASecret = (req, res, next) => {
+  const options = {name:req.body.name, account: req.body.account};
+  try {
+    const newOTPSecret = authenticate.generate2FASecret(options);
+    return res.status(200).json({
+      OTPSecret: newOTPSecret.secret
+    });
+  } catch (err) {
+    return next(new AppError(err, 500));
+  }
+};
+
+exports.generate2FAToken = (req, res, next) => {
+  if (!req.body.OTPSecret) {
+    return next(
+      new AppError('No OTPSecret provided!', 401)
+    );
+  }
+
+  const OTPSecret = req.body.OTPSecret;
+  try {
+    // 1) Generate signed accessToken using jsonwebtoken
+    const newOTPToken = authenticate.generate2FAToken(OTPSecret);
+    return res.status(200).json({
+      OTPToken: newOTPToken.token
+    });
+  } catch (err) {
+    return next(new AppError(err, 500));
+  }
+};
+
+exports.verify2FAToken = (req, res, next) => {
+  if (!req.body.OTPSecret || !req.body.OTPToken) {
+    return next(
+      new AppError('No secret/token provided for verification!', 401)
+    );
+  }
+
+  const OTPSecret = req.body.OTPSecret;
+  const OTPToken = req.body.OTPToken;
+
+  try {
+    const result = authenticate.verify2FAToken(OTPSecret, OTPToken, next);
+
+    return res.status(200).json(result);
+  } catch (err) {
+    return next(new AppError(err, 500));
+  }
+};
+

@@ -6,6 +6,7 @@ const Review = require('./../../models/reviewModel');
 const User = require('./../../models/userModel');
 const Booking = require('./../../models/bookingModel');
 const Role = require('./../../models/roleModel');
+const RefreshToken = require('./../../models/refreshTokenModel');
 
 dotenv.config({ path: './config.env' });
 
@@ -49,6 +50,7 @@ const deleteData = async () => {
     await Review.deleteMany();
     await Booking.deleteMany();
     await Role.deleteMany();
+    await RefreshToken.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
     console.log(err);

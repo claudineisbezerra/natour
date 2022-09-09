@@ -1,4 +1,3 @@
-const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const Role = require('./../models/roleModel');
@@ -6,24 +5,20 @@ const RefreshToken = require('./../models/refreshTokenModel');
 const authController = require('./../controllers/authController');
 const AppError = require('./../utils/appError');
 const catchAsync = require('./../utils/catchAsync');
+const authenticate = require('./../utils/authenticate');
 
-
-// Generate signed accessToken using jsonwebtoken
-const signAccessToken = id => {
-  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN });
-};
 
 const silentAccessTokenRenew = async (req, res, next) => {
   // 1) Check if refresh toke was provided
   if (!req.body.requestToken) {
     return next(
-      new AppError('Token param is required!', 403)
+      new AppError('Token param (refresh token) is required!', 403)
     );
   }
-
+  const requestToken = req.body.requestToken;
   try {
     // 2) Check if refresh token exists in database
-    let userRefreshToken = await RefreshToken.findOne({ token: req.body.requestToken });
+    let userRefreshToken = await RefreshToken.findOne({ token: requestToken }).populate("user", "_id is2FAEnabled");
     if (!userRefreshToken) {
       return next(
         new AppError('Refresh token not found!', 403)
@@ -38,7 +33,12 @@ const silentAccessTokenRenew = async (req, res, next) => {
     }
 
     // 4) Generate new access token
-    const newAccessToken = signAccessToken(userRefreshToken.user._id);
+    let newAccessToken;
+    if (userRefreshToken.user.is2FAEnabled){
+      newAccessToken = authenticate.signAccessToken(userRefreshToken.user._id, false);
+    } else {
+      newAccessToken = authenticate.signAccessToken(userRefreshToken.user._id, true);
+    }
 
     // 5) Set cookie for new timeframe access token validity
     res.cookie('jwt', newAccessToken, {
@@ -49,14 +49,12 @@ const silentAccessTokenRenew = async (req, res, next) => {
     
     // 6) Set header to use new valid AccessToken on the flow
     req.headers.authorization = `Bearer ${newAccessToken}`;
-    console.log('silentAccessTokenRenew req.headers.authorization: ',req.headers.authorization)
 
     // 7) Get user associated to accessToken
     const currentUser = await User.findById(userRefreshToken.user._id).populate({path: 'roles',select: '-__v'});
     if (!currentUser) {
       return next( new AppError('The user belonging to this accessToken does no longer exist.', 401));
     }
-
     // Grant access to authorized route
     req.user = currentUser;
     res.locals.user = currentUser;
@@ -68,28 +66,12 @@ const silentAccessTokenRenew = async (req, res, next) => {
   }
 };
 
-
 verifyToken = async (req, res, next) => {
   // 1) Getting accessToken and check of it's there
-  let accessToken;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    accessToken = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    accessToken = req.cookies.jwt;
-  }
-  console.log('verifyToken accessToken req.headers.authorization: ', req.headers.authorization)
-  console.log('verifyToken accessToken req.cookies.jwt: ', req.cookies.jwt)
-
-  if (!accessToken) {
-    return next(
-      new AppError('No accessToken provided! Please log in to get access.', 401)
-    );
-  }
-
+  let accessToken = authenticate.getBearerToken(req.headers, req.cookies, next);
   try {
-    // 2) Verification of accessToken [is valid, has expired...]
-    const decoded = await promisify(jwt.verify)(accessToken, process.env.JWT_ACCESS_SECRET);
-    console.log('verifyToken accessToken decoded: ', decoded)
+    // 2) accessToken validation - example TokenExpiredError
+    const decoded = await authenticate.validateAccessToken(accessToken, next);
 
     // 3) Check if user still exists
     const currentUser = await User.findById(decoded.id).populate({path: 'roles',select: '-__v'});
@@ -104,12 +86,18 @@ verifyToken = async (req, res, next) => {
       );
     }
 
+    // 5) Verification to garantee that user with enabled 2FA is already authorized
+    if (currentUser.is2FAEnabled && !decoded.authorized){
+      return next(
+        new AppError('2FA authorization is required as 2FA is enabled to the user.', 401)
+      )
+    }
+
     // Grant access to authorized route
     req.user = currentUser;
     res.locals.user = currentUser;
     return next();
   } catch (err) {
-    console.log(err)
     if (err.name = 'TokenExpiredError') {
       // refreshToken is required to get new accessToken
       if (!req.cookies.jwtRefreshToken) {
@@ -118,7 +106,7 @@ verifyToken = async (req, res, next) => {
         );
       } else {
         req.body.requestToken = req.cookies.jwtRefreshToken;
-      }      
+      }
       await silentAccessTokenRenew(req, res, next);
     } else {
       return next(

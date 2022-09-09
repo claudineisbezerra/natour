@@ -6,21 +6,26 @@ const { verifySignUp, authJwt } = require('./../middlewares');
 const router = express.Router();
 
 // ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
-router.get("/test/all", userController.allAccess);
-router.get("/test/user", [authJwt.verifyToken], userController.userBoard);
-router.get("/test/admin", [authJwt.verifyToken, authJwt.isAdmin], userController.adminBoard);
-router.get("/test/guide",  [authJwt.verifyToken, authJwt.isGuide], userController.guideBoard);
+
+
+
 // ------------------------------------ TEST API AUTH ENDPOINTS ------------------------------------
 
 // GET or POST /users/{{userId}}/bookings
 // router.use('/:userId/bookings', bookingRouter);
 
 router.post('/signup', verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted, authController.signup);
-// Verify user account before logging in
+// Verify user account by email link before logging in
 router.patch('/verify/:verifyToken', authController.verifyUserAccount);
 router.post('/login', authJwt.isAccountVerified, authController.login);
-router.post('/refreshtoken', authController.renewAccessToken);
+
+// Authenticate using two factor authentication providing time-based one-time password (TOTP) secret
+router.post('/loginTOTP', authController.loginTOTP);
+
 router.get('/logout', authController.logout);
+
+// Renew access token using refresh token
+router.post('/refreshtoken', authController.renewAccessToken);
 
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:accessToken', authController.resetPassword);
