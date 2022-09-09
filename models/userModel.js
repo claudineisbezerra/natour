@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema({
   },
   is2FAEnabled: {
     type: Boolean,
-    default: true
+    default: false
   },
   active: {
     type: Boolean,
