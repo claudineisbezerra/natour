@@ -2,6 +2,7 @@ const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
 const bookingRouter = require('./../routes/bookingRoutes');
+const reviewRouter = require('./../routes/reviewRoutes');
 const { verifySignUp, authJwt } = require('./../middlewares');
 const router = express.Router();
 
@@ -38,6 +39,9 @@ router.delete('/deleteMe', userController.deleteMe);
 
 // GET or POST /users/{{userId}}/bookings
 router.use('/:userId/bookings', bookingRouter);
+
+// GET or POST /users/{{userId}}/reviews
+router.use('/:userId/reviews', reviewRouter);
 
 router.use(authJwt.restrictToRoles('admin'));
 

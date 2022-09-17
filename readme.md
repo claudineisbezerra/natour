@@ -120,10 +120,14 @@ git push heroku master
       09/09/2022: two-factor authentication.
 - [x] 09/09/2022: Implement a sign up form, similar to the login form;
 - [x] 09/09/2022: Create verification endpoint to activate account;
-- [ ] On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
+- [x] 17/09/2022: On the tour detail page, if a user has taken a tour, allow them add a review directly on the website.
       Implement a form for this;
-- [ ] Hide the entire booking section on the tour detail page if current user has already booked the tour
+      17/09/2022: On the tour detail page, allow user to book for only not booked dates.
+      17/09/2022: On the tour detail page, allow user to review already booked tours and update existing reviews.
+      12/09/2022: Show new Tour date format. Show only the tour dates booked by the user.
+- [x] Hide the entire booking section on the tour detail page if current user has already booked the tour
       (also prevent duplicate bookings on the model);
+      17/09/2022: Booked tour benn presented by date.
 - [ ] Implement “like tour” functionality, with favourite tour page;
 - [ ] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them.
       (If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!);

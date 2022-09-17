@@ -17,7 +17,6 @@ block content
     .header__hero
       .header__hero-overlay &nbsp;
       img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
-
     .heading-box
       h1.heading-primary
         span= `${tour.name} tour`
@@ -36,9 +35,10 @@ block content
       div
         .overview-box__group
           h2.heading-secondary.ma-bt-lg Quick facts
+          each tourStartDate, index in tour.startDates
+            - const date = tourStartDate.startDate.toLocaleString('en-us', {month: 'long', year: 'numeric'})
+            +overviewBox('Next date', date, 'calendar')
 
-          - const date = tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
-          +overviewBox('Next date', date, 'calendar')
           +overviewBox('Difficulty', tour.difficulty, 'trending-up')
           +overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
           +overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
@@ -55,7 +55,6 @@ block content
               - if (guide.role === 'guide')
                 span.overview-box__label Tour guide
               span.overview-box__text= guide.name
-
     .description-box
       h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
       - const parapraphs = tour.description.split('\n');
@@ -75,17 +74,72 @@ block content
       each review in tour.reviews
         +reviewCard(review)
 
-  section.section-cta
-    .cta
-      .cta__img.cta__img--logo
-        img(src='/img/logo-white.png', alt='Natours logo')
-      img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
-      img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
-      .cta__content
-        h2.heading-secondary What are you waiting for?
-        p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-        
-        if user
-          button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
-        else
-          a.btn.btn--green.span-all-rows(href='/login') Log in to book tour
+  section.section-description
+    .overview-box
+      .overview-box__group
+        .cta
+          .cta__img.cta__img--logo
+            img(src='/img/logo-white.png', alt='Natours logo')
+          img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
+          img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+          .cta__content
+            h2.heading-secondary What are you waiting for?
+            p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+          .cta__content
+            if (user)
+              //- Available remaining dates for tour whose has been already booked
+              if (bookedTours && bookedTours.length > 0)
+                each tourStartDate, index in tour.startDates
+                  - const startDateMMYYY = tourStartDate.startDate.toLocaleString('en-us', {month: 'long', year: 'numeric'})
+                  - const startDateMillisecs = tourStartDate.startDate.getTime()
+                  each bookedTour in bookedTours
+                    - const bookedDateMillisecs = bookedTour.tourStartDate.getTime()
+                    - const clientReferenceId = tour.id.concat('_', startDateMillisecs)
+
+                    if !(String(tour.id) === String(bookedTour.tourId) && startDateMillisecs === bookedDateMillisecs)
+                      button.btn.btn--small.btn--green.span-all-rows#book-tour(name='book-tour', data-client-reference-id = `${clientReferenceId}`, data-tour-id=`${tour.id}`) 
+                        | Book Now!
+                        <br>
+                        | For <b>!{startDateMMYYY}</b>!
+              //- No tour has been booked already
+              else
+                each tourStartDate, index in tour.startDates
+                  - const startDateMMYYY = tourStartDate.startDate.toLocaleString('en-us', {month: 'long', year: 'numeric'})
+                  - const startDateMillisecs = tourStartDate.startDate.getTime()
+                  - const clientReferenceId = tour.id.concat('_', startDateMillisecs)
+                  button.btn.btn--small.btn--green.span-all-rows#book-tour(name='book-tour', data-client-reference-id = `${clientReferenceId}`, data-tour-id=`${tour.id}`)
+                    | Book Now!
+                    <br>
+                    | For <b>!{startDateMMYYY}</b>!
+            else
+              a.btn.btn--green.span-all-rows(href='/login') Log in to book a tour
+
+    .description-box
+      .overview-box__group
+        .cta  
+          img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
+          img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+          .cta__content
+            h2.heading-secondary Share your experience
+            p.cta__text= `By sharing your experience, you are helping travellers to make better choices.`
+          .cta__content
+            if (user)
+              if (bookedTours && bookedTours.length > 0)
+                each tourStartDate, index in tour.startDates
+                  - const startDateMMYYY = tourStartDate.startDate.toLocaleString('en-us', {month: 'long', year: 'numeric'})
+                  - const startDateMMDDYYYY = tourStartDate.startDate.toLocaleString('en-us', {month: 'numeric', day: 'numeric', year: 'numeric'})
+                  each bookedTour in bookedTours
+                    - const bookedDateMMDDYYYY = bookedTour.tourStartDate.toLocaleString('en-us', {month: 'numeric', day: 'numeric', year: 'numeric'})
+                    if (String(tour.id) === String(bookedTour.tourId) && startDateMMDDYYYY === bookedDateMMDDYYYY)
+                      if (bookedTour.reviewId && bookedTour.reviewId != 'undefined')
+                        a.btn.btn--small.btn--green.span-all-rows(href=`/review?reviewId=${bookedTour.reviewId}&tourId=&tourStartDate=&action=update`)
+                         | Check your last review.
+                         <br>
+                         | On Tour <b>!{startDateMMYYY}</b>!
+                      else
+                        a.btn.btn--small.btn--green.span-all-rows(href=`/review?reviewId=${bookedTour.reviewId}&tourId=${tour.id}&tourStartDate=${startDateMMDDYYYY}&action=create`)
+                         | Make a review of your last tour
+                         <br>
+                         | on <b>!{startDateMMYYY}</b>!
+            else
+              a.btn.btn--green.span-all-rows(href='/login') Log in review your tour

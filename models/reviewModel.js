@@ -4,9 +4,13 @@ const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
-    review: {
+    title: {
       type: String,
-      required: [true, 'Review can not be empty!']
+      required: [true, 'Review title can not be empty!']
+    },
+    content: {
+      type: String,
+      required: [true, 'Review content can not be empty!']
     },
     rating: {
       type: Number,

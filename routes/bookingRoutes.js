@@ -9,6 +9,7 @@ const router = express.Router({ mergeParams: true });
 // all routes after this middleware
 router.use(authJwt.verifyToken);
 
+// Get stripe session
 router.get('/checkout-session/:tourId', bookingController.getStripeCheckoutSession);
 
 router.use(authJwt.restrictToRoles('admin', 'lead-guide'));

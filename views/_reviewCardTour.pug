@@ -1,5 +1,12 @@
-mixin reviewCard(review)
-  .reviews__card
+mixin reviewCardTour(review)
+  .reviews__card_tour
+    .card__header
+      .card__picture
+        .card__picture-overlay &nbsp;
+        img.card__picture-img(src=`/img/tours/${review.tour.imageCover}`, alt=`${review.tour.name}`)
+      h3.heading-tertirary
+        span= review.tour.name
+
     .reviews__avatar
       img.reviews__avatar-img(src=`/img/users/${review.user.photo}`, alt=`${review.user.name}`)
       h6.reviews__user= review.user.name
@@ -8,3 +15,4 @@ mixin reviewCard(review)
       each star in [1, 2, 3, 4, 5]
         svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
           use(xlink:href='/img/icons.svg#icon-star')
+

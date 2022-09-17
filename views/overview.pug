@@ -3,7 +3,6 @@ extends base
 block content
   main.main
     .card-container
-    
       each tour in tours
         .card
           .card__header
@@ -20,10 +19,11 @@ block content
               svg.card__icon
                 use(xlink:href='/img/icons.svg#icon-map-pin')
               span= tour.startLocation.description
-            .card__data
-              svg.card__icon
-                use(xlink:href='/img/icons.svg#icon-calendar')
-              span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+            each tourStartDate in tour.startDates
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-calendar')
+                span= tourStartDate.startDate.toLocaleString('en-us', {month: 'long', day: 'numeric', year: 'numeric'})
             .card__data
               svg.card__icon
                 use(xlink:href='/img/icons.svg#icon-flag')

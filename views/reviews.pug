@@ -1,0 +1,10 @@
+extends base
+include _reviewCardTour
+
+block content
+  main.main
+    .card-container
+      each review in reviews
+        //- a.btn-card(href=`/review?reviewId=${review._id}`)
+        a.btn-card(href=`/review?reviewId=${review._id}&tourId=&tourStartDate=&action=update`)
+          +reviewCardTour(review)

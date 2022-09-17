@@ -1,0 +1,112 @@
+extends base
+
+block content
+  main.main
+    .review-view
+      .reviews__card_tour
+        .card__header
+          .card__picture
+            .card__picture-overlay &nbsp;
+            img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+          h3.heading-tertirary
+            span= tour.name
+
+      .review-view__content
+        h2.heading-secondary.ma-bt-md Share your experience
+        form.form.form-review-data
+        // Check for not empty object
+        if (Object.getOwnPropertyNames(review).length > 0)
+          .form__group
+            input#action.form__input(type='hidden', value=`${action}`, name='action')
+            input#backURL.form__input(type='hidden', value=`${backURL}`, name='backURL')
+            input#tour-id.form__input(type='hidden', value=`${tour._id}`, name='tour-id')
+            input#review-id.form__input(type='hidden', value=`${review._id}`, name='review-id')
+            
+            .reviews__rating#starwrap
+              each star in [1, 2, 3, 4, 5]
+                svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`, id=`${star}`)
+                  use(xlink:href='/img/icons.svg#icon-star')
+              label.form__label &nbsp; &nbsp; Rating
+          .form__group.ma-bt-md
+            label.form__label(for='review-title') Title
+            input#review-title.form__input(type='text', value=`${review.title}`, placeholder='Summarize your experience or highlight an interesting detail', required, name='review-title')
+          .form__group.ma-bt-md
+            label.form__label(for='review-content') Your review
+            textarea#review-content.form__input--textarea(type='text', rows="5", placeholder='By sharing your experience, you are helping travellers to make better choices.', required, name='review-content')
+              | #{review.content}
+          .form__group
+            .form__group.float-left
+              button#btn-delete-review.btn.btn--small.btn--red Delete review
+            .form__group.float-right
+              button#btn-update-review.btn.btn--small.btn--green Save review
+        else
+          //- Create New Review
+          .form__group
+            input#action.form__input(type='hidden', value=`${action}`, name='action')
+            input#backURL.form__input(type='hidden', value=`${backURL}`, name='backURL')
+            input#tour-id.form__input(type='hidden', value=`${tour._id}`, name='tour-id')
+            
+            .reviews__rating#starwrap
+              each star in [1, 2, 3, 4, 5]
+                svg.reviews__star(class=`reviews__star--${0 >= star ? 'active' : 'inactive'}`, id=`${star}`)
+                  use(xlink:href='/img/icons.svg#icon-star')
+              label.form__label &nbsp; &nbsp; Rating
+          .form__group.ma-bt-md
+            label.form__label(for='review-title') Title 
+            input#review-title.form__input(type='text', placeholder='Summarize your experience or highlight an interesting detail', required, name='review-title')
+          .form__group.ma-bt-md
+            label.form__label(for='review-content') Your review
+            textarea#review-content.form__input--textarea(type='text', rows="5", placeholder='By sharing your experience, you are helping travellers to make better choices.', required, name='review-content')
+          .form__group
+            .form__group.float-right
+              button#btn-create-review.btn.btn--small.btn--green Create review
+
+  script.
+    //- STARRY() : SET STAR RATING
+    //- target : target html element
+    //- disabled : cannot change number of stars/click, default false
+    //- click : run this function when user click on star
+    function starry (instance) {
+      if (instance.disabled === undefined) { instance.disabled = false; }
+
+      let svgElements = instance.target.getElementsByClassName("reviews__star")
+      for (let i=0; i<svgElements.length; i++) {
+        if (!instance.disabled) {
+          // Attach function to onclick event
+          if (instance.click) { 
+            svgElements[i].onclick = () => { 
+              instance.click(i+1); 
+            }; 
+          }
+        }
+      }
+
+      //- GET NUMBER OF SELECTED STARS
+      instance.target.getStars = () => {
+        return instance.target.querySelectorAll(".reviews__star--active").length;
+      };
+    }
+
+    //- INIT STAR RATING
+    starry({
+      //- REQUIRED
+      target: document.getElementById("starwrap"),
+      disabled: false,
+      click : (stars) => { 
+        let svgElements = document.getElementsByClassName("reviews__star")
+        for (let i=0; i<svgElements.length; i++) {
+          if (stars > i) { 
+            svgElements[i].classList.remove("reviews__star--inactive"); 
+            svgElements[i].classList.add("reviews__star--active"); 
+          } else {
+            svgElements[i].classList.remove("reviews__star--active"); 
+            svgElements[i].classList.add("reviews__star--inactive"); 
+          }
+        }
+      }
+    });
+
+    // (D) TO GET NUMBER OF STARS PROGRAMMATICALLY
+    //- let stars = document.getElementById("starwrap").getStars();
+    //- alert("getStars() : "+stars);
+

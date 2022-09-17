@@ -12,7 +12,7 @@
     "startDates": [
       {
         "startDate": "2022-06-19T00:00:00.000Z",
-        "participants": ["5c8a1dfa2f8fb814b56fa181", "5c8a1ec62f8fb814b56fa183","5c8a1d5b0190b214360dc057", "5c8a1f292f8fb814b56fa184"],
+        "participants": ["0c8a1d5b0190b214360dc058", "5c8a1dfa2f8fb814b56fa181", "5c8a1ec62f8fb814b56fa183","5c8a1d5b0190b214360dc057", "5c8a1f292f8fb814b56fa184"],
         "soldOut": false
       },
       {
@@ -145,7 +145,7 @@
     "startDates": [
       {
         "startDate": "2023-01-05T00:00:00.000Z",
-        "participants": [],
+        "participants": ["0c8a1d5b0190b214360dc058"],
         "soldOut": false
       },
       {
@@ -275,7 +275,7 @@
     "startDates": [
       {
         "startDate": "2022-03-11T00:00:00.000Z",
-        "participants": [],
+        "participants": ["0c8a1d5b0190b214360dc058"],
         "soldOut": false
       },
       {
@@ -527,7 +527,7 @@
     "startDates": [
       {
         "startDate": "2022-02-12T00:00:00.000Z",
-        "participants": [],
+        "participants": ["0c8a1d5b0190b214360dc058"],
         "soldOut": false
       },
       {

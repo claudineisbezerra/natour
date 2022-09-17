@@ -26,7 +26,7 @@ const bookingSchema = new mongoose.Schema({
   },
   paid: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 
@@ -89,7 +89,6 @@ bookingSchema.statics.updateBookingReference = async function(tourId, userId, to
   );
 }
 
-
 bookingSchema.post('save', function(doc, next) {
   // this points to current booking
   // Needs to use 'constructor' to access static methods
@@ -119,7 +118,7 @@ bookingSchema.pre('aggregate', function(next) {
 bookingSchema.pre(/^find/, function(next) {
   this.populate('user').populate({
     path: 'tour',
-    select: 'name'
+    select: 'name startDates'
   });
   next();
 });

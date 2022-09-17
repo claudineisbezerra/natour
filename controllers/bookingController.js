@@ -55,7 +55,14 @@ exports.checkBookingRules = catchAsync(async (req, res, next) => {
         numberOfParticipants: { $cond: { if: { $isArray: "$startDates.participants" }, then: { $size: "$startDates.participants" }, else: 0} }
       }
    }
-  ]);
+  ]); 
+  console.log('bookingController checkedObj: ', checkedObj);
+
+  if (checkedObj.length <= 0) {
+    return next(
+      new AppError(`Not found a Tour: ${tourId} with provided Start Date: ${tourStartDate}.`, 409)
+    );
+  }
 
   if (checkedObj[0].numberOfParticipants >= checkedObj[0].maxGroupSize) {
     return next(
@@ -66,8 +73,15 @@ exports.checkBookingRules = catchAsync(async (req, res, next) => {
 });
 
 exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
-  // 1) Get the currently booked tour
-  const tour = await Tour.findById(req.params.tourId);
+  // 1) Get the currently booked tour and tour start date
+  //    clientReferenceId = {tourId}_{startDate_in_milissecods}, this is used because strips allows only one key reference
+  //    and tourId + startDate is required to identify user tour
+  const tourId = req.params.tourId;
+  const clientReferenceId = req.query.clientReferenceId;
+  console.log('getStripeCheckoutSession tourId: ', tourId);
+  console.log('getStripeCheckoutSession clientReferenceId: ', clientReferenceId);
+
+  const tour = await Tour.findById(tourId);
 
   // 2) Create checkout session
   const session = await stripe.checkout.sessions.create({
@@ -78,7 +92,8 @@ exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
     success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
-    client_reference_id: req.params.tourId,
+    client_reference_id: clientReferenceId,
+    // client_reference_id: tourId,
     line_items: [
       {
         name: `${tour.name} Tour`,
@@ -100,11 +115,35 @@ exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
-const createBookingCheckout = async session => {
-  const tour = session.client_reference_id;
-  const user = (await User.findOne({ email: session.customer_email })).id;
+// Payment control is set one time after checkout confirmation sent bt stripe webhook
+// It works only in ptoduction environment once is configures in stripe to do so
+const createBookingAfterCheckout = async session => {
+  const clientReferenceId = session.client_reference_id;
+  const userId = (await User.findOne({ email: session.customer_email })).id;
   const price = session.display_items[0].amount / 100;
-  await Booking.create({ tour, user, price });
+
+  let tourId, tourStartDate;
+  if (clientReferenceId) {
+    const arrClientReference = clientReferenceId.split("_");
+    console.log('createBookingAfterCheckout clientReferenceId arrClientReference: ', arrClientReference);
+
+    tourId = arrClientReference[0];
+    // Convert from milisseconds format to date format
+    tourStartDate = new Date(arrClientReference[1]);
+
+    console.log('createBookingAfterCheckout clientReferenceId tourId: ', tourId);
+    console.log('createBookingAfterCheckout clientReferenceId tourStartDate: ', tourStartDate);
+  }
+
+  const bookingObj = {
+    _id: clientReferenceId,
+    tour: tourId,
+    user: userId,
+    price,
+    tourStartDate
+  }
+  
+  await Booking.create(bookingObj);
 };
 
 exports.webhookStripeCheckout = (req, res, next) => {
@@ -131,8 +170,9 @@ exports.webhookStripeCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  if (event.type === 'checkout.session.completed')
-    createBookingCheckout(event.data.object);
+  if (event.type === 'checkout.session.completed') {
+    createBookingAfterCheckout(event.data.object);
+  }
 
   res.status(200).json({ received: true });
 };
