@@ -9,8 +9,6 @@ exports.deleteOne = Model =>
       return next(new AppError('No document found with that ID', 404));
     }
 
-    // console.log('deleteOne doc: ', doc);
-
     res.status(204).json({
       status: 'success',
       data: {
@@ -26,8 +24,6 @@ exports.updateOne = Model =>
       new: true,
       runValidators: true
     }).clone();
-
-    // console.log('updateOne: ', doc);
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));

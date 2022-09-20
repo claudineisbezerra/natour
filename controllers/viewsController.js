@@ -40,34 +40,19 @@ exports.getTour = catchAsync(async (req, res, next) => {
   if (!tour) {
     return next(new AppError('There is no tour with that name.', 404));
   }
-  // console.log('getTour tour: ',tour);
-
   // 2) Get the logged user
   const user = res.locals.user;
-  // console.log('getTour user: ',user);
-  // console.log('getTour user._id: ',user._id);
-  // console.log('getTour tour._id: ',tour._id);
   let bookedTours = [];
   if (user) {
     // 3) Get booked tours of connected user
     tour.startDates.forEach(date => {
       let bookedTour;
-      // console.log('date: ', date);
       date.participants.forEach(participant => {
         // 1) Get tour review
         let reviewId;
         if(String(user._id) === String(participant)) {
           tour.reviews.forEach(review => {
-            // console.log('review.user: ',review.user)
             if (String(tour._id) === String(review.tour) && String(user._id) === String(review.user._id)) {
-              // console.log('user._id: ',user._id)
-              // console.log('participant: ',participant)
-              // console.log('tour._id: ',tour._id)
-              // console.log('review.tour: ',review.tour)
-              // // console.log('review.user: ',review.user)
-              // console.log('review.user: ',review.user._id)
-              // console.log(' ');
-
               reviewId = review._id;
             }
           });
@@ -88,7 +73,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
   } else {
     return next(new AppError('There is no user logged in. Please Log in.', 404));
   }
-  // console.log('bookedTours: ', bookedTours);
 
   // 2) Build template
 
@@ -191,19 +175,24 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
           from: 'tours',
           localField: 'tour',
           foreignField: '_id',
-          as: 'tour'
+          as: 'tours'
         }
     },
     // 3) Merge Booking and Tour objects to be one
     {
-      $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$tour", 0 ] }, "$$ROOT" ] } }
+      $replaceRoot: { 
+        newRoot: { 
+          $mergeObjects: [ 
+            { $arrayElemAt: [ "$tours", 0 ] }, "$$ROOT" ] 
+        } 
+      }
     },
     // 4) Recriate object properties
     // important! Keeps only a TOUR DATE booked by the user
     { 
       $project: {
-        _id: 0,
-        name: 1, 
+        _id: "$tour",
+        name: 1,
         duration: 1,
         maxGroupSize:1,
         difficulty:1,
@@ -232,11 +221,28 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
       } 
     }
   ])
-
+  
   res.status(200).render('overview', {
     title: 'My Tours',
     tours
   });
+});
+
+exports.getMyFavoriteTours = catchAsync(async (req, res, next) => {
+  const { favorites } = req.query;
+  const tourIds = favorites.split(',') ; // Turn list o strings separated by comma into array os strings
+  const filter = { '_id': { '$in': tourIds } } ; // Turn array into object for search filter
+
+  const doc = await Tour.find(filter);
+
+  // Send Response to front end PUG page
+  res.status(200).render('overview', {
+    title: 'My Favorite Tours',
+    status: 'success',
+    results: doc.length,
+    tours: doc
+  });
+
 });
 
 exports.getMyReviews = catchAsync(async (req, res, next) => {
@@ -254,7 +260,7 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
   
   const doc = await features.query;
 
-  // SEND RESPONSE TO FRONT END PUG PAGE
+  // Send Response to front end PUG page
   res.status(200).render('reviews', {
     title: 'Review your tour experiences',
     status: 'success',
@@ -265,7 +271,7 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
 
 exports.getReviewForm = catchAsync(async (req, res, next) => {
   // Paramenter send by querystring
-  const { action, reviewId, tourId, tourStartDate } = req.query;
+  const { action, reviewId, tourId } = req.query;
   const backURL = req.header('Referer');
 
   let docResult = {};

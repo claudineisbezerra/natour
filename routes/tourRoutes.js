@@ -47,6 +47,13 @@ router
   );
 
 router
+  .route('/favorites')
+  .get(
+    authJwt.verifyToken,
+    tourController.getMyFavoriteTours
+  );
+
+router
   .route('/:id')
   .get(tourController.getTour)
   .patch(

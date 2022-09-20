@@ -128,8 +128,9 @@ git push heroku master
 - [x] Hide the entire booking section on the tour detail page if current user has already booked the tour
       (also prevent duplicate bookings on the model);
       17/09/2022: Booked tour benn presented by date.
-- [ ] Implement “like tour” functionality, with favourite tour page;
+- [x] 20/09/2022: Implement “like tour” functionality, with favourite tour page;
 - [ ] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them.
+      17/09/2022: Implemented using PUG templates
       (If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!);
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours,
       users, reviews, and bookings.

@@ -56,8 +56,6 @@ exports.checkBookingRules = catchAsync(async (req, res, next) => {
       }
    }
   ]); 
-  console.log('bookingController checkedObj: ', checkedObj);
-
   if (checkedObj.length <= 0) {
     return next(
       new AppError(`Not found a Tour: ${tourId} with provided Start Date: ${tourStartDate}.`, 409)
@@ -78,9 +76,6 @@ exports.getStripeCheckoutSession = catchAsync(async (req, res, next) => {
   //    and tourId + startDate is required to identify user tour
   const tourId = req.params.tourId;
   const clientReferenceId = req.query.clientReferenceId;
-  console.log('getStripeCheckoutSession tourId: ', tourId);
-  console.log('getStripeCheckoutSession clientReferenceId: ', clientReferenceId);
-
   const tour = await Tour.findById(tourId);
 
   // 2) Create checkout session
@@ -125,14 +120,9 @@ const createBookingAfterCheckout = async session => {
   let tourId, tourStartDate;
   if (clientReferenceId) {
     const arrClientReference = clientReferenceId.split("_");
-    console.log('createBookingAfterCheckout clientReferenceId arrClientReference: ', arrClientReference);
-
     tourId = arrClientReference[0];
     // Convert from milisseconds format to date format
     tourStartDate = new Date(arrClientReference[1]);
-
-    console.log('createBookingAfterCheckout clientReferenceId tourId: ', tourId);
-    console.log('createBookingAfterCheckout clientReferenceId tourStartDate: ', tourStartDate);
   }
 
   const bookingObj = {

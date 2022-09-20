@@ -2,14 +2,8 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
-
-export const getReview = async (id) => {
-  console.log('getReview Called...')
-};
-
 export const createReview = async (data) => {
   const backURL = data.get('backURL') ? data.get('backURL') : '/my-reviews';
-
   try {
     const res = await axios({
       method: 'POST',
@@ -35,14 +29,6 @@ export const createReview = async (data) => {
 
 export const updateReview = async (data) => {
   const backURL = data.get('backURL') ? data.get('backURL') : '/my-reviews';
-
-  // alert('updateReview backURL '+ data.get('backURL'));
-  // console.log('updateReview data.get(backURL): ', data.get('backURL'));
-  // console.log('updateReview backURL: ', backURL);
-
-  // alert('updateReview data.get(reviewId): '+ data.get('reviewId'));
-  // console.log('updateReview data.get(reviewId): ', data.get('reviewId'));
-
   try {
     const res = await axios({
       method: 'PATCH',
@@ -54,12 +40,6 @@ export const updateReview = async (data) => {
         "tour": data.get('tourId'),
       }
     });
-
-
-    // location.assign(backURL);
-    // console.log('res.redirect(back): ', res.redirect(back))
-    // location.assign('/tour/the-sea-explorer');
-    // location.assign('/my-reviews');
 
     if (res.data.status === 'success') {
       showAlert('success', 'Review successfully updated!');
@@ -74,7 +54,6 @@ export const updateReview = async (data) => {
 
 export const deleteReview = async (data) => {
   const backURL = data.get('backURL') ? data.get('backURL') : '/my-reviews';
-
    try {
     const res = await axios({
       method: 'DELETE',

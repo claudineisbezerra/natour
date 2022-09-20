@@ -1031,6 +1031,14 @@ body {
   text-shadow: none;
   border-color: #f7f7f7;
 }
+
+.nav__el svg {
+  height: 3.5rem;
+  width: 3.5rem;
+  fill: #f7f7f7;
+  margin-right: 1rem;
+}
+
 .nav__search {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1241,7 +1249,7 @@ body {
   font-size: 1.2rem;
   text-transform: uppercase;
   font-weight: 700;
-  grid-column: 1 / -1;
+  /* grid-column: 1 / -1; */
 }
 .card__text {
   grid-column: 1 / -1;
@@ -1262,6 +1270,28 @@ body {
 .card__data svg {
   margin-right: 0.7rem;
 }
+
+.card__data-svg {
+  font-size: 1.3rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-left: auto; 
+  margin-right: 0;
+  margin-top: -20px;
+  margin-bottom: 0;
+}
+
+.card__data-svg__icon {
+  height: 4rem;
+  width: 4rem;
+  fill: #55c57a;
+  cursor: pointer;
+}
+
 .card__icon {
   height: 2rem;
   width: 2rem;

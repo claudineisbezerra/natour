@@ -69,6 +69,20 @@ exports.aliasTopTours = (req, res, next) => {
 const populateOptionsAll = 'numberOfParticipants';
 exports.getAllTours = factory.getAll(Tour, populateOptionsAll);
 
+exports.getMyFavoriteTours = catchAsync(async (req, res, next) => {
+  const { favorites } = req.body;
+  const filter = { '_id': { '$in': favorites } } ; // Turn array into object for search filter
+
+  const tours = await Tour.find(filter);
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    tours: tours
+  });
+});
+
+
 exports.createTour = factory.createOne(Tour);
 
 const populateOptionsOneById = 'reviews numberOfParticipants';
