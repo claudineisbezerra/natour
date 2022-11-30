@@ -1,0 +1,56 @@
+mixin manageReviewsList
+  .user-view__content
+    .user-view__form-container
+      //- Row of section title
+      h2.heading-secondary.ma-bt-md !{data.title}
+      //- Row of action buttons
+      .manage-view
+        .review-view__content
+          .manage-container
+            .manage-container__grid.grid-col-1
+              .manage-container-cell.d-flex.justify-content-right.pb-4
+                button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-manage-create-review(name='btn-manage-create-review') Create Review 
+                button.btn.btn--small.btn--red.span-all-rows.ml-lg-3#btn-manage-delete-reviews(name='btn-manage-delete-reviews') Delete Review 
+          //- Container of contents
+          .manage-container
+          //- Header
+          .manage-container__grid.grid-col-7
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-green
+              input#select-all-reviews.form__input--checkbox(type='checkbox', onClick="toggleCheckboxes(this,\'checkbox-review\')", name='select-all-reviews')
+              label.form__label(for='select-all-reviews')
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Tour
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green User
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Review Title
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Review Content
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Rating
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Actions
+          
+          each review in data.reviews
+            .manage-container__grid.grid-col-7.checkbox-review-row
+              .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+                label.form__label(for=`${review._id}`)
+                input.form__input--checkbox(id=`${review._id}`, type='checkbox', value=`${review._id}`, name=`checkbox-review`)
+              .manage-container-cell.bg-light-grey
+                h6.manage-container__reviews-content !{review.tour.name}
+              .manage-container-cell.bg-light-grey
+                h6.manage-container__reviews-content !{review.user.name}
+              .manage-container-cell.bg-light-grey
+                h6.manage-container__reviews-content !{review.title}
+              .manage-container-cell.bg-light-grey
+                h6.manage-container__reviews-content !{review.content}
+              .manage-container-cell.bg-light-grey
+                h6.manage-container__reviews-content !{review.rating} stars
+              .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                a.cell__el(href=`#editModal`)
+                  svg
+                    use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                a.cell__el(name='btn-manage-delete-review', data-review-id=`${review._id}`)
+                  svg
+                    use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal")
+

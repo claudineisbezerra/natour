@@ -3,8 +3,19 @@ include _reviewCardTour
 
 block content
   main.main
+    - let isAdmin = function search(myArray) {
+    -                  for (var i=0; i < myArray.length; i++) {
+    -                      if (myArray[i].name.toLowerCase() === 'admin') {
+    -                          return true;
+    -                      }
+    -                  }
+    -              }
+    
+    - if (isAdmin(user.roles))
+      .card-container-crud
+          button.btn.btn--small.btn--green.span-all-rows#btn-add-review(name='add-review')
+            | Add Review
     .card-container
       each review in reviews
-        //- a.btn-card(href=`/review?reviewId=${review._id}`)
         a.btn-card(href=`/review?reviewId=${review._id}&tourId=&tourStartDate=&action=update`)
           +reviewCardTour(review)

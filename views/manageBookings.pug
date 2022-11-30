@@ -1,0 +1,9 @@
+extends base
+include _viewLeftMenu
+include _manageBookingsContent
+
+block content
+  main.main
+    .user-view
+      +viewLeftMenu(user, action)
+      +manageBookingsContent()

@@ -11303,7 +11303,14 @@ var logout = /*#__PURE__*/function () {
 
           case 3:
             res = _context3.sent;
-            if (res.data.status = 'success') location.reload(true);
+
+            // if ((res.data.status = 'success')) location.reload(true);
+            if (res.data.status = 'success') {
+              window.setTimeout(function () {
+                location.assign('/');
+              }, 1500);
+            }
+
             _context3.next = 10;
             break;
 
@@ -12000,6 +12007,10 @@ var userPasswordForm = document.querySelector('.form-user-password');
 var bookBtn = document.getElementsByName('book-tour');
 var favoriteList = document.getElementsByName('favorite-list');
 var myFavoriteLnk = document.getElementById('lnk_my-favorites');
+var manageCreateReviewBtn = document.getElementById('btn-manage-create-review');
+var manageUpdateReviewBtn = document.getElementById('btn-manage-update-review');
+var manageDeleteReviewsBtn = document.getElementById('btn-manage-delete-reviews');
+var manageDeleteReviewBtn = document.getElementsByName('btn-manage-delete-review');
 var createReviewBtn = document.getElementById('btn-create-review');
 var updateReviewBtn = document.getElementById('btn-update-review');
 var deleteReviewBtn = document.getElementById('btn-delete-review'); // DELEGATION
@@ -12031,7 +12042,10 @@ if (loginForm) {
 }
 
 if (logOutBtn) {
-  logOutBtn.addEventListener('click', _registration.logout);
+  logOutBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    (0, _registration.logout)();
+  });
 }
 
 if (userDataForm) {
@@ -12085,30 +12099,64 @@ if (userPasswordForm) {
   }());
 }
 
-if (createReviewBtn) {
-  createReviewBtn.addEventListener('click', /*#__PURE__*/function () {
+if (manageDeleteReviewsBtn) {
+  manageDeleteReviewsBtn.addEventListener('click', /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-      var oldTextContent, data;
+      var boxes, checkedIds, _alertMessage, elements, count, i;
+
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              e.preventDefault();
-              oldTextContent = e.target.textContent;
-              e.target.textContent = 'Creating new review ...';
-              data = new FormData();
-              data.append('tourId', document.getElementById('tour-id').value);
-              data.append('reviewTitle', document.getElementById('review-title').value);
-              data.append('reviewContent', document.getElementById('review-content').value);
-              data.append('reviewRating', document.getElementById("starwrap").getStars());
-              data.append('backURL', document.getElementById("backURL").value);
-              _context2.next = 11;
-              return (0, _review.createReview)(data);
+              e.preventDefault(); //- Remove an hide checkbox rows
 
-            case 11:
-              e.target.textContent = oldTextContent;
+              boxes = document.querySelectorAll(".checkbox-review-row");
+              checkedIds = [];
+              boxes.forEach(function (box) {
+                var checkBox = box.querySelector('[name="checkbox-review"]');
 
-            case 12:
+                if (checkBox.checked === true) {
+                  checkedIds.push(checkBox.id);
+                  box.style.display = "none";
+                }
+              });
+
+              if (!(checkedIds.length <= 0)) {
+                _context2.next = 9;
+                break;
+              }
+
+              _alertMessage = 'There is no selected itens!';
+              (0, _alerts.showAlert)('success', _alertMessage, 10);
+              checkedIds.length = 0;
+              return _context2.abrupt("return", false);
+
+            case 9:
+              //- Uncheck checkbox-all once all elements was deleted
+              elements = document.querySelectorAll(".checkbox-review-row");
+              count = 0;
+
+              for (i = 0; i < elements.length; i++) {
+                if (elements[i].style.display != "none") {
+                  count++;
+                }
+              }
+
+              if (count <= 0) {
+                document.getElementById('select-all-reviews').checked = false;
+              } // const oldTextContent = e.target.textContent;
+              // e.target.textContent = 'Creating new review ...';
+              // let data = new FormData();
+              // data.append('tourId', document.getElementById('tour-id').value );
+              // data.append('reviewTitle', document.getElementById('review-title').value );
+              // data.append('reviewContent', document.getElementById('review-content').value );
+              // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+              // data.append('backURL', document.getElementById("backURL").value );
+              // await createReview(data);
+              // e.target.textContent = oldTextContent;
+
+
+            case 13:
             case "end":
               return _context2.stop();
           }
@@ -12124,33 +12172,58 @@ if (createReviewBtn) {
 
 ;
 
-if (updateReviewBtn) {
-  updateReviewBtn.addEventListener('click', /*#__PURE__*/function () {
+if (manageDeleteReviewBtn) {
+  var checkedIds = [];
+  Array.from(manageDeleteReviewBtn).forEach(function (element) {
+    element.addEventListener('click', function (e) {
+      var parent = element.closest(".checkbox-review-row");
+      var reviewId = element.getAttribute('data-review-id');
+      parent.style.display = "none";
+      checkedIds.push(reviewId); // const oldTextContent = e.target.textContent;
+      // e.target.textContent = 'Creating new review ...';
+      // let data = new FormData();
+      // data.append('tourId', document.getElementById('tour-id').value );
+      // data.append('reviewTitle', document.getElementById('review-title').value );
+      // data.append('reviewContent', document.getElementById('review-content').value );
+      // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+      // data.append('backURL', document.getElementById("backURL").value );
+      // await createReview(data);
+      // e.target.textContent = oldTextContent;
+    });
+  });
+}
+
+;
+
+if (manageCreateReviewBtn) {
+  manageCreateReviewBtn.addEventListener('click', /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
-      var oldTextContent, data;
+      var href;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
               e.preventDefault();
-              oldTextContent = e.target.textContent;
-              e.target.textContent = 'Creating new review ...';
-              data = new FormData();
-              data.append('reviewId', document.getElementById('review-id').value);
-              data.append('tourId', document.getElementById('tour-id').value);
-              data.append('reviewTitle', document.getElementById('review-title').value);
-              data.append('reviewContent', document.getElementById('review-content').value);
-              data.append('reviewRating', document.getElementById("starwrap").getStars());
-              data.append('backURL', document.getElementById("backURL").value);
-              _context3.next = 12;
-              return (0, _review.updateReview)(data);
+              console.log('manageCreateReviewBtn');
 
-            case 12:
-              e.target.textContent = oldTextContent;
-              document.getElementById('review-title').value = '';
-              document.getElementById('review-content').value = '';
+              try {
+                href = "/manage-reviews?action=manage-reviews.create";
+                window.location.href = href;
+              } catch (err) {
+                (0, _alerts.showAlert)('error', err);
+              } // const oldTextContent = e.target.textContent;
+              // e.target.textContent = 'Creating new review ...';
+              // let data = new FormData();
+              // data.append('tourId', document.getElementById('tour-id').value );
+              // data.append('reviewTitle', document.getElementById('review-title').value );
+              // data.append('reviewContent', document.getElementById('review-content').value );
+              // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+              // data.append('backURL', document.getElementById("backURL").value );
+              // await createReview(data);
+              // e.target.textContent = oldTextContent;
 
-            case 15:
+
+            case 3:
             case "end":
               return _context3.stop();
           }
@@ -12166,29 +12239,30 @@ if (updateReviewBtn) {
 
 ;
 
-if (deleteReviewBtn) {
-  deleteReviewBtn.addEventListener('click', /*#__PURE__*/function () {
+if (createReviewBtn) {
+  createReviewBtn.addEventListener('click', /*#__PURE__*/function () {
     var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(e) {
-      var data;
+      var oldTextContent, data;
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
               e.preventDefault();
-              e.target.textContent = 'Deleting...';
+              oldTextContent = e.target.textContent;
+              e.target.textContent = 'Creating new review ...';
               data = new FormData();
-              data.append('reviewId', document.getElementById('review-id').value);
               data.append('tourId', document.getElementById('tour-id').value);
+              data.append('reviewTitle', document.getElementById('review-title').value);
+              data.append('reviewContent', document.getElementById('review-content').value);
+              data.append('reviewRating', document.getElementById("starwrap").getStars());
               data.append('backURL', document.getElementById("backURL").value);
-              _context4.next = 8;
-              return (0, _review.deleteReview)(data);
-
-            case 8:
-              e.target.textContent = 'Delete rating';
-              document.getElementById('review-title').value = '';
-              document.getElementById('review-content').value = '';
+              _context4.next = 11;
+              return (0, _review.createReview)(data);
 
             case 11:
+              e.target.textContent = oldTextContent;
+
+            case 12:
             case "end":
               return _context4.stop();
           }
@@ -12198,6 +12272,86 @@ if (deleteReviewBtn) {
 
     return function (_x4) {
       return _ref4.apply(this, arguments);
+    };
+  }());
+}
+
+;
+
+if (updateReviewBtn) {
+  updateReviewBtn.addEventListener('click', /*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
+      var oldTextContent, data;
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              e.preventDefault();
+              oldTextContent = e.target.textContent;
+              e.target.textContent = 'Creating new review ...';
+              data = new FormData();
+              data.append('reviewId', document.getElementById('review-id').value);
+              data.append('tourId', document.getElementById('tour-id').value);
+              data.append('reviewTitle', document.getElementById('review-title').value);
+              data.append('reviewContent', document.getElementById('review-content').value);
+              data.append('reviewRating', document.getElementById("starwrap").getStars());
+              data.append('backURL', document.getElementById("backURL").value);
+              _context5.next = 12;
+              return (0, _review.updateReview)(data);
+
+            case 12:
+              e.target.textContent = oldTextContent;
+              document.getElementById('review-title').value = '';
+              document.getElementById('review-content').value = '';
+
+            case 15:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5);
+    }));
+
+    return function (_x5) {
+      return _ref5.apply(this, arguments);
+    };
+  }());
+}
+
+;
+
+if (deleteReviewBtn) {
+  deleteReviewBtn.addEventListener('click', /*#__PURE__*/function () {
+    var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(e) {
+      var data;
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              e.preventDefault();
+              e.target.textContent = 'Deleting...';
+              data = new FormData();
+              data.append('reviewId', document.getElementById('review-id').value);
+              data.append('tourId', document.getElementById('tour-id').value);
+              data.append('backURL', document.getElementById("backURL").value);
+              _context6.next = 8;
+              return (0, _review.deleteReview)(data);
+
+            case 8:
+              e.target.textContent = 'Delete rating';
+              document.getElementById('review-title').value = '';
+              document.getElementById('review-content').value = '';
+
+            case 11:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }));
+
+    return function (_x6) {
+      return _ref6.apply(this, arguments);
     };
   }());
 }
@@ -12264,40 +12418,40 @@ if (favoriteList) {
 if (myFavoriteLnk) {
   // get favorite tours from local storage or empty array
   myFavoriteLnk.addEventListener('click', /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
-      var favorites, _alertMessage;
+    var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(e) {
+      var favorites, _alertMessage2;
 
-      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
               e.preventDefault();
               favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
               if (!(favorites && favorites.length > 0)) {
-                _context5.next = 6;
+                _context7.next = 6;
                 break;
               }
 
               (0, _tour.myFavorites)(favorites);
-              _context5.next = 9;
+              _context7.next = 9;
               break;
 
             case 6:
-              _alertMessage = 'You have no Favorite Tours for now!';
-              (0, _alerts.showAlert)('success', _alertMessage, 10);
-              return _context5.abrupt("return");
+              _alertMessage2 = 'You have no Favorite Tours for now!';
+              (0, _alerts.showAlert)('success', _alertMessage2, 10);
+              return _context7.abrupt("return");
 
             case 9:
             case "end":
-              return _context5.stop();
+              return _context7.stop();
           }
         }
-      }, _callee5);
+      }, _callee7);
     }));
 
-    return function (_x5) {
-      return _ref5.apply(this, arguments);
+    return function (_x7) {
+      return _ref7.apply(this, arguments);
     };
   }());
 }
@@ -12332,7 +12486,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51351" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53242" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

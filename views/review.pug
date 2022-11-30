@@ -10,11 +10,11 @@ block content
             img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
           h3.heading-tertirary
             span= tour.name
-
       .review-view__content
         h2.heading-secondary.ma-bt-md Share your experience
-        form.form.form-review-data
-        // Check for not empty object
+        form
+        //- Update existing review
+        //- Check for not empty object
         if (Object.getOwnPropertyNames(review).length > 0)
           .form__group
             input#action.form__input(type='hidden', value=`${action}`, name='action')

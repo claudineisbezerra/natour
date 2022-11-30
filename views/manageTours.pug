@@ -1,0 +1,9 @@
+extends base
+include _viewLeftMenu
+include _manageToursContent
+
+block content
+  main.main
+    .user-view
+      +viewLeftMenu(user, action)
+      +manageToursContent()

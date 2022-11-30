@@ -1,0 +1,137 @@
+mixin manageBookingsContent()
+  script.
+    function toggleCheckboxes(elSource, elName) {
+        checkboxes = document.getElementsByName(elName);
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = elSource.checked;
+        }
+    }
+  .user-view__content
+    .user-view__form-container
+      //- Row of section title
+      h2.heading-secondary.ma-bt-md Manage Booking TEMPLATE
+
+      //- main.main
+      .review-view
+        .review-view__content
+          form
+            .form__group.ma-bt-md
+              label.form__label(for='user') User
+              input#user.form__input(type='text', placeholder='Select a user', required, name='user')
+
+            .form__group.ma-bt-md
+              label.form__label(for='tour') Tour
+              input#tour.form__input(type='text', placeholder='Select a tour', required, name='tour')
+
+            .form__group.ma-bt-md
+              label.form__label(for='start-date') Tour start date
+              input#start-date.form__input(type='text', placeholder='December / 2022', required, name='start-date')
+
+            .form__group.ma-bt-md
+              label.form__label(for='price') Price
+              input#price.form__input(type='text', placeholder='$ 497.00', required, name='price')
+
+            .form__group
+              .form__group.float-left
+                button#btn-delete-review.btn.btn--small.btn--red Delete review
+              .form__group.float-right
+                button#btn-update-review.btn.btn--small.btn--green Save review
+
+      .line &nbsp;
+
+      //- Row of action buttons
+      .manage-view
+        .review-view__content
+          .manage-container
+            .manage-container__grid.grid-col-1
+              .manage-container-cell.d-flex.justify-content-right.pb-4
+                button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-add-review(name='add-user') Add User 
+                button.btn.btn--small.btn--red.span-all-rows.ml-lg-3#btn-add-review(name='delete-user') Delete User 
+          //- Container of contents
+          .manage-container
+          //- Row of titles
+          .manage-container__grid.grid-col-7-bookings
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-green
+              input#select-all-id.form__input--checkbox(type='checkbox', onClick="toggleCheckboxes(this,\'checkbox-booking\')", name=`select-all-bookings`)
+              label.form__label(for='select-all-id')
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green User
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Tour
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Start Date
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Price
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Created At
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Actions
+          //- Row 1 of content list
+          .manage-container__grid.grid-col-7-bookings
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId1')
+              input#checkboxId1.form__input--checkbox(type='checkbox', value=1, placeholder=``, name=`checkbox-booking`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content User01
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 2 of content list
+          .manage-container__grid.grid-col-7-bookings
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId2')
+              input#checkboxId2.form__input--checkbox(type='checkbox', value=2, placeholder=``, name=`checkbox-booking`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content User02
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 3 of content list
+          .manage-container__grid.grid-col-7-bookings
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId3')
+              input#checkboxId3.form__input--checkbox(type='checkbox', value=3, placeholder=``, name=`checkbox-booking`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content User03
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 

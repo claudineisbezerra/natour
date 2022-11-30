@@ -1,0 +1,47 @@
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+
+mixin viewLeftMenu(user, action)
+  nav.user-view__menu
+    - let isRoleFound = function search(nameKey, myArray){
+    -                        for (var i=0; i < myArray.length; i++) {
+    -                            if (myArray[i].name.toLowerCase() === nameKey.toLowerCase()) {
+    -                                return myArray[i];
+    -                            }
+    -                        }
+    -                    }
+
+    - let isAdmin = function search(myArray) {
+    -                  for (var i=0; i < myArray.length; i++) {
+    -                      if (myArray[i].name.toLowerCase() === 'admin') {
+    -                          return true;
+    -                      }
+    -                  }
+    -              }
+
+    - let isUser = function search(myArray) {
+    -                  for (var i=0; i < myArray.length; i++) {
+    -                      if (myArray[i].name.toLowerCase() === 'user') {
+    -                          return true;
+    -                      }
+    -                  }
+    -              }
+    - if (isUser(user.roles))
+      ul.side-nav
+        +navItem('/me', 'Settings', 'settings', action === 'settings'? true : false)
+        +navItem('/my-tours', 'My bookings', 'briefcase')
+        +navItem('/my-reviews', 'My reviews', 'bookmark')
+        +navItem('/billing', 'Billing', 'credit-card', action === 'billing'? true : false)
+
+    - if (isAdmin(user.roles))
+      .admin-nav
+        h5.admin-nav__heading Admin
+        ul.side-nav
+          +navItem('/manage-tours?action=manage-tours.list', 'Manage tours', 'map', action.includes('manage-tours') ? true : false)
+          +navItem('/manage-users?action=manage-users.list', 'Manage users', 'users', action.includes('manage-users') ? true : false)
+          +navItem('/manage-reviews?action=manage-reviews.list', 'Manage reviews', 'star', action.includes('manage-reviews') ? true : false)
+          +navItem('/manage-bookings?action=manage-bookings.list', 'Manage bookings', 'briefcase',action.includes('manage-bookings') ? true : false)

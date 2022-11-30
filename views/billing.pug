@@ -1,0 +1,9 @@
+extends base
+include _viewLeftMenu
+include _billingContent
+
+block content
+  main.main
+    .user-view
+      +viewLeftMenu(user, action)
+      +billingContent()

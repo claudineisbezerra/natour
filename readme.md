@@ -83,6 +83,16 @@ STRIPE_WEBHOOK_SECRET=<STRIP_KEY>
 
 ## Deployment
 
+Install and verify Heroku CLI
+
+```heroku Instalattion link
+
+https://devcenter.heroku.com/articles/heroku-cli
+
+heroku --version
+
+```
+
 Create App on Heroku
 
 ```heroku CLI

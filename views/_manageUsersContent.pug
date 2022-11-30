@@ -1,0 +1,151 @@
+mixin manageUsersContent()
+  script.
+    function toggleCheckboxes(elSource, elName) {
+        checkboxes = document.getElementsByName(elName);
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = elSource.checked;
+        }
+    }
+  .user-view__content
+    .user-view__form-container
+      //- Row of section title
+      h2.heading-secondary.ma-bt-md Manage Users TEMPLATE
+
+      //- main.main
+      .review-view
+        .review-view__content
+          form
+            .form__group.form__photo-upload
+              img.form__user-photo(src=`/img/users/user-6.jpg`, alt='User photo')
+              input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+              label(for='photo') Choose new photo
+            br
+            br
+            .form__group.ma-bt-md
+              label.form__label(for='name') Name
+              input#name.form__input(type='text', placeholder='Your name', required, name='name')
+
+            .form__group.ma-bt-md
+              label.form__label(for='email') Email address
+              input#email.form__input(type='email', placeholder='Your email',, required, name='email')
+
+            .form__group.ma-bt-md
+              input#rolesId1.form__input--checkbox(type='checkbox', placeholder='Admin', required, name='roles')
+              label.form__label--checkbox(for='rolesId1') Admin
+
+            .form__group.ma-bt-md
+              input#rolesId2.form__input--checkbox(type='checkbox', placeholder='User', required, name='roles')
+              label.form__label--checkbox(for='rolesId2') User
+
+            .form__group.ma-bt-md
+              input#rolesId3.form__input--checkbox(type='checkbox', placeholder='Guide', required, name='roles')
+              label.form__label--checkbox(for='rolesId3') Guide
+              
+            .form__group.ma-bt-md
+              label.form__label(for='password') New password
+              input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              
+            .form__group
+              .form__group.float-left
+                button#btn-delete-review.btn.btn--small.btn--red Delete review
+              .form__group.float-right
+                button#btn-update-review.btn.btn--small.btn--green Save review
+
+      .line &nbsp;
+
+      //- Row of action buttons
+      .manage-view
+        .review-view__content
+          .manage-container
+            .manage-container__grid.grid-col-1
+              .manage-container-cell.d-flex.justify-content-right.pb-4
+                button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-add-review(name='add-user') Add User 
+                button.btn.btn--small.btn--red.span-all-rows.ml-lg-3#btn-add-review(name='delete-user') Delete User 
+          //- Container of contents
+          .manage-container
+          //- Row of titles
+          .manage-container__grid.grid-col-7-users
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-green
+              input#select-all-id.form__input--checkbox(type='checkbox', onClick="toggleCheckboxes(this,\'checkbox-user\')", name=`select-all-users`)
+              label.form__label(for='select-all-id')
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Photo
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Name
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Email
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Roles
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Created At
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Actions
+          //- Row 1 of content list
+          .manage-container__grid.grid-col-7-users
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId1')
+              input#checkboxId1.form__input--checkbox(type='checkbox', value=1, placeholder=``, name=`checkbox-user`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Photo
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Guide Profile
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content guide@email.com
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Admin | Guide
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 2 of content list
+          .manage-container__grid.grid-col-7-users
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId2')
+              input#checkboxId2.form__input--checkbox(type='checkbox', value=2, placeholder=``, name=`checkbox-user`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Photo
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Guide Profile
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content guide@email.com
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Admin | Guide
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 3 of content list
+          .manage-container__grid.grid-col-7-users
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId3')
+              input#checkboxId3.form__input--checkbox(type='checkbox', value=3, placeholder=``, name=`checkbox-user`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Photo
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Guide Profile
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content guide@email.com
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Admin | Guide
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content 2022-06-19
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 

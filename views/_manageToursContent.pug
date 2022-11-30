@@ -1,0 +1,357 @@
+mixin manageToursContent()
+  script.
+    function toggleCheckboxes(elSource, elName) {
+        checkboxes = document.getElementsByName(elName);
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = elSource.checked;
+        }
+    }
+
+  .user-view__content
+    .user-view__form-container
+      //- Row of section title
+      h2.heading-secondary.ma-bt-md Manage Tours TEMPLATE
+
+      //- main.main
+      .review-view
+        .review-view__content
+          form
+            .form__group.ma-bt-md
+              label.form__label(for='name') Name
+              input#name.form__input(type='text', placeholder='The Sea Explorer', required, name='name')
+
+            .form__group.ma-bt-md
+              label.form__label(for='summary') Summary
+              input#summary.form__input(type='text', placeholder='Exploring the jaw-dropping US east coast by foot and by boat', required, name='summary')
+
+            .form__group.ma-bt-md
+              label.form__label(for='description') Description
+              textarea#description.form__input--textarea(type='text', rows="5", placeholder='Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', required, name='description')
+
+            .form__group.ma-bt-md
+              label.form__label(for='duration') Duration
+              input#duration.form__input(type='text', placeholder='7 Days', required, name='duration')
+
+            .form__group.ma-bt-md
+              label.form__label(for='max-group-size') Max Group Size
+              input#max-group-size.form__input(type='text', placeholder='15 Participants', required, name='max-group-size')
+
+            .form__group.ma-bt-md
+              label.form__label(for='difficulty') Difficulty Level
+              input#difficulty.form__input(type='text', placeholder='Medium', required, name='difficulty')
+
+            .form__group.ma-bt-md
+              label.form__label(for='price') Price
+              input#price.form__input(type='text', placeholder='$ 497.00', required, name='price')
+
+            .line &nbsp;
+            .form__group
+              .manage-container
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell.d-flex
+                    h2.heading-secondary Tour Images
+                  .manage-container-cell.d-flex.justify-content-right
+                    input.form__upload(type='file', accept='image/*', id='guide-images', name='guide-images')
+                    label.label-invert.btn.btn--small.btn--green(for='guide-images') Upload Tour Images
+            br
+            //- Row of action buttons - Images
+            .manage-view
+              .manage-container.pl-2.pr-2
+                //- Row of titles
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Image
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Image type
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Actions
+
+                //- Row 1 of content list
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell.bg-light-grey.d-grid.grid-align-center
+                    img.form__user-photo(src=`/img/tours/tour-1-1.jpg`, alt='Tour image cover')
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Cover Image
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+
+                //- Row 2 of content list
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell.bg-light-grey.d-grid.grid-align-center
+                    img.form__user-photo(src=`/img/tours/tour-1-2.jpg`, alt='Tour image cover')
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Additional Image
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal")
+
+                //- Row 3 of content list
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell.bg-light-grey.d-grid.grid-align-center
+                    img.form__user-photo(src=`/img/tours/tour-1-3.jpg`, alt='Tour image cover')
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Another Additional Image
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+            br
+            br
+            .line &nbsp;
+            .form__group
+              .manage-container
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell.d-flex
+                    h2.heading-secondary Locations
+                  .manage-container-cell.d-flex.justify-content-right
+                    button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-add-location(name='add-location') Add
+            .form__group.ma-bt-md
+              label.form__label(for='description') Description
+              input#description.form__input(type='text', placeholder='Miami, USA', required, name='description')
+            .form__group.ma-bt-md
+              label.form__label(for='type') Type
+              input#type.form__input(type='text', placeholder='Point', required, name='type')
+            .form__group.ma-bt-md
+              label.form__label(for='coordinates') Coordinates
+              input#coordinates.form__input(type='text', placeholder='-80.185942, 25.774772', required, name='coordinates')
+            .form__group.ma-bt-md
+              label.form__label(for='address') Address
+              input#address.form__input(type='text', placeholder='301 Biscayne Blvd, Miami, FL 33132, USA', required, name='address')
+              
+            //- Row of action buttons - Locations
+            .manage-view
+              .manage-container.pl-2.pr-2
+                //- Row of titles
+                .manage-container__grid.grid-col-5
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Description
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Type
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Coordinates
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Address
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Actions
+                //- Row 1 of content list
+                .manage-container__grid.grid-col-5
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Miami, USA
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Point
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content -80.185942, 25.774772
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content 301 Biscayne Blvd, Miami, FL 33132, USA
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                          
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+
+            .line &nbsp;
+            .form__group
+              .manage-container
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell.d-flex
+                    h2.heading-secondary Start Dates
+                  .manage-container-cell.d-flex.justify-content-right
+                    button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-add-start-date(name='add-start-date') Add
+            .form__group.ma-bt-md
+              label.form__label(for='start-date') Start date
+              input#start-date.form__input(type='text', placeholder='December / 2022', required, name='start-date')
+
+            //- Row of action buttons - Start Dates
+            .manage-view
+              .manage-container.pl-2.pr-2
+                //- Row of titles
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Start Date
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Actions
+
+                //- Row 1 of content list
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content December / 2022
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                          
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+
+            .line &nbsp;
+            .form__group
+              .manage-container
+                .manage-container__grid.grid-col-2
+                  .manage-container-cell.d-flex
+                    h2.heading-secondary Guides
+                  .manage-container-cell.d-flex.justify-content-right
+                    input.form__upload(type='file', accept='image/*', id='guide-images', name='guide-images')
+                    label.label-invert.btn.btn--small.btn--green(for='guide-images') Upload Tour Guides
+            br
+            //- Row of action buttons - Guides
+            .manage-view
+              .manage-container.pl-2.pr-2
+                //- Row of titles
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Photo
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Name
+                  .manage-container-cell
+                    h6.manage-container__reviews-title.bg-secondary Actions
+
+                //- Row 1 of content list
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell.bg-light-grey.d-grid.grid-align-center
+                    img.form__user-photo(src=`/img/users/user-8.jpg`, alt='Guide')
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Alexander
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+
+                //- Row 2 of content list
+                .manage-container__grid.grid-col-3
+                  .manage-container-cell.bg-light-grey.d-grid.grid-align-center
+                    img.form__user-photo(src=`/img/users/user-9.jpg`, alt='Guide')
+                  .manage-container-cell.bg-light-grey
+                    h6.manage-container__reviews-content Alexander
+                  .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+                    a.cell__el(href=`#editModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    a.cell__el(href=`#deleteModal`)
+                      svg
+                        use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+            br
+            br
+            br
+            .form__group
+              .form__group.float-left
+                button#btn-delete-tours.btn.btn--small.btn--red Delete Tour
+              .form__group.float-right
+                button#btn-update-tours.btn.btn--small.btn--green Save Tour
+
+      .line &nbsp;
+
+      //- Row of action buttons
+      .manage-view
+        .review-view__content
+          .manage-container
+            .manage-container__grid.grid-col-1
+              .manage-container-cell.d-flex.justify-content-right.pb-4
+                button.btn.btn--small.btn--green.span-all-rows.ml-lg-3#btn-add-tour(name='add-tour') Add Tour
+                button.btn.btn--small.btn--red.span-all-rows.ml-lg-3#btn-delete-tour(name='delete-tour') Delete Tour
+          //- Container of contents
+          .manage-container
+          //- Row of titles
+          .manage-container__grid.grid-col-7
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-green
+              input#select-all.form__input--checkbox(type='checkbox', onClick="toggleCheckboxes(this,\'checkbox-tour\')", name=`select-all-tours`)
+              label.form__label(for='select-all')
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Name
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Summary
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Start Dates
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Review Content
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Price
+            .manage-container-cell
+              h6.manage-container__reviews-title.bg-green Actions
+          //- Row 1 of content list
+          .manage-container__grid.grid-col-7
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId1')
+              input#checkboxId1.form__input--checkbox(type='checkbox', value=1, placeholder=``, name=`checkbox-tour`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Exploring the jaw-dropping US east coast by foot and by boat
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022 | Jan/2023 | Apr/2023
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content My experience was wonderful
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 2 of content list
+          .manage-container__grid.grid-col-7
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId2')
+              input#checkboxId2.form__input--checkbox(type='checkbox', value=2, placeholder=``, name=`checkbox-tour`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Exploring the jaw-dropping US east coast by foot and by boat
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022 | Jan/2023 | Apr/2023
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content My experience was wonderful
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 
+          //- Row 3 of content list
+          .manage-container__grid.grid-col-7
+            .manage-container-cell.d-flex.justify-content-center.p-3.bg-light-grey
+              label.form__label(for='checkboxId3')
+              input#checkboxId3.form__input--checkbox(type='checkbox', value=3, placeholder=``, name=`checkbox-tour`)
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content The Sea Explorer
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Exploring the jaw-dropping US east coast by foot and by boat
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content Dec/2022 | Jan/2023 | Apr/2023
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content My experience was wonderful
+            .manage-container-cell.bg-light-grey
+              h6.manage-container__reviews-content $ 497.00
+            .manage-container-cell.d-flex.justify-content-right.bg-light-grey
+              a.cell__el(href=`#editModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-pencil` class="edit" data-toggle="modal") 
+                    
+              a.cell__el(href=`#deleteModal`)
+                svg
+                  use(xlink:href=`img/icons.svg#icon-trash3` class="delete" data-toggle="modal") 

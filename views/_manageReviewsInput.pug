@@ -1,0 +1,37 @@
+mixin manageReviewsInput
+  .user-view__content
+    .user-view__form-container
+      //- Row of section title
+      h2.heading-secondary.ma-bt-md Manage Reviews TEMPLATE
+      .review-view
+        .review-view__content
+            form
+              .form__group
+                .reviews__rating#starwrap
+                  each star in [1, 2, 3, 4, 5]
+                    svg.reviews__star(class=`reviews__star--${0 >= star ? 'active' : 'inactive'}`, id=`${star}`)
+                      use(xlink:href='/img/icons.svg#icon-star')
+                  label.form__label &nbsp; &nbsp; Rating
+                  
+              .form__group.ma-bt-md
+                label.form__label(for='review-user') User
+                input#review-user.form__input(type='text', placeholder='Select the user thar will review the tour', required, name='review-user')
+
+              .form__group.ma-bt-md
+                label.form__label(for='review-tour') Tour
+                input#review-tour.form__input(type='text', placeholder='Select the tour you want to review', required, name='review-tour')
+
+              .form__group.ma-bt-md
+                label.form__label(for='review-title') Title
+                input#review-title.form__input(type='text', placeholder='Summarize your experience or highlight an interesting detail', required, name='review-title')
+              
+              .form__group.ma-bt-md
+                label.form__label(for='review-content') Your review
+                textarea#review-content.form__input--textarea(type='text', rows="5", placeholder='By sharing your experience, you are helping travellers to make better choices.', required, name='review-content')
+
+              .form__group
+                .form__group.float-left
+                  button#btn-delete-review.btn.btn--small.btn--red Delete review
+                .form__group.float-right
+                  button#btn-update-review.btn.btn--small.btn--green Save review
+

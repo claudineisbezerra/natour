@@ -112,6 +112,7 @@ app.use(
       baseUri: ["'self'"],
       connectSrc: ["'self'", ...CSP.connectSrc],
       scriptSrc: ["'self'",  "'unsafe-inline'", ...CSP.scriptSrc],
+      scriptSrcAttr: ["'self'",  "'unsafe-inline'"],
       scriptSrcElem: ["'self'", "'unsafe-inline'", ...CSP.scriptSrcElem],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'", ...CSP.styleSrc],
       workerSrc: ["'self'", 'blob:'],

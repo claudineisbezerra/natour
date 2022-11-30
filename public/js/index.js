@@ -18,6 +18,10 @@ const userPasswordForm = document.querySelector('.form-user-password');
 const bookBtn = document.getElementsByName('book-tour');
 const favoriteList = document.getElementsByName('favorite-list');
 const myFavoriteLnk = document.getElementById('lnk_my-favorites');
+const manageCreateReviewBtn = document.getElementById('btn-manage-create-review');
+const manageUpdateReviewBtn = document.getElementById('btn-manage-update-review');
+const manageDeleteReviewsBtn = document.getElementById('btn-manage-delete-reviews');
+const manageDeleteReviewBtn = document.getElementsByName('btn-manage-delete-review');
 const createReviewBtn = document.getElementById('btn-create-review');
 const updateReviewBtn = document.getElementById('btn-update-review');
 const deleteReviewBtn = document.getElementById('btn-delete-review');
@@ -50,7 +54,10 @@ if (loginForm) {
 }
 
 if (logOutBtn) {
-  logOutBtn.addEventListener('click', logout);
+  logOutBtn.addEventListener('click', e => {
+    e.preventDefault();
+    logout();
+  });
 }
 
 if (userDataForm) {
@@ -84,6 +91,111 @@ if (userPasswordForm) {
     document.getElementById('password-confirm').value = '';
   });
 }
+
+if (manageDeleteReviewsBtn) {
+  manageDeleteReviewsBtn.addEventListener('click', async e => {
+    e.preventDefault();
+
+    //- Remove an hide checkbox rows
+    let boxes = document.querySelectorAll(".checkbox-review-row");
+    let checkedIds = [];
+
+    boxes.forEach((box) => {
+        const checkBox = box.querySelector('[name="checkbox-review"]');
+        if (checkBox.checked === true) {
+            checkedIds.push(checkBox.id);
+            box.style.display = "none";
+        }
+    })
+
+    if(checkedIds.length <= 0) {
+      const alertMessage = 'There is no selected itens!'
+      showAlert('success', alertMessage, 10);
+      checkedIds.length = 0
+      return false
+    }
+
+    //- Uncheck checkbox-all once all elements was deleted
+    let elements = document.querySelectorAll(".checkbox-review-row");
+    let count = 0;
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].style.display != "none") {
+        count++
+      }
+    }
+    if (count <= 0) {
+        document.getElementById('select-all-reviews').checked = false
+    }
+
+    // const oldTextContent = e.target.textContent;
+    // e.target.textContent = 'Creating new review ...';
+
+    // let data = new FormData();
+    // data.append('tourId', document.getElementById('tour-id').value );
+    // data.append('reviewTitle', document.getElementById('review-title').value );
+    // data.append('reviewContent', document.getElementById('review-content').value );
+    // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+    // data.append('backURL', document.getElementById("backURL").value );
+    // await createReview(data);
+
+    // e.target.textContent = oldTextContent;
+  });
+};
+
+if (manageDeleteReviewBtn) {
+  let checkedIds = [];
+  Array.from(manageDeleteReviewBtn)
+  .forEach(element => {
+    element.addEventListener('click', e => {
+      let parent = element.closest(".checkbox-review-row");
+      let reviewId = element.getAttribute('data-review-id');
+      parent.style.display = "none";
+      checkedIds.push(reviewId)
+
+    // const oldTextContent = e.target.textContent;
+    // e.target.textContent = 'Creating new review ...';
+
+    // let data = new FormData();
+    // data.append('tourId', document.getElementById('tour-id').value );
+    // data.append('reviewTitle', document.getElementById('review-title').value );
+    // data.append('reviewContent', document.getElementById('review-content').value );
+    // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+    // data.append('backURL', document.getElementById("backURL").value );
+    // await createReview(data);
+
+    // e.target.textContent = oldTextContent;
+
+    });
+  });
+};
+
+if (manageCreateReviewBtn) {
+  manageCreateReviewBtn.addEventListener('click', async e => {
+    e.preventDefault();
+     console.log('manageCreateReviewBtn')
+   
+    try {
+      const href = `/manage-reviews?action=manage-reviews.create`
+      window.location.href = href;
+    } catch (err) {
+      showAlert('error', err);
+    }
+
+
+    // const oldTextContent = e.target.textContent;
+    // e.target.textContent = 'Creating new review ...';
+
+    // let data = new FormData();
+    // data.append('tourId', document.getElementById('tour-id').value );
+    // data.append('reviewTitle', document.getElementById('review-title').value );
+    // data.append('reviewContent', document.getElementById('review-content').value );
+    // data.append('reviewRating', document.getElementById("starwrap").getStars() );
+    // data.append('backURL', document.getElementById("backURL").value );
+    // await createReview(data);
+
+    // e.target.textContent = oldTextContent;
+  });
+};
 
 if (createReviewBtn) {
   createReviewBtn.addEventListener('click', async e => {

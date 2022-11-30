@@ -1,0 +1,13 @@
+extends base
+include _viewLeftMenu
+include _manageReviewsList
+include _manageReviewsInput
+
+block content
+  main.main
+    .user-view
+      +viewLeftMenu(user, action)
+      - if (action.includes('list'))
+        +manageReviewsList(action, data, backURL)
+      - if (action.includes('create'))
+        +manageReviewsInput

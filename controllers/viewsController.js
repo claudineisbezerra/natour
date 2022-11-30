@@ -4,6 +4,7 @@ const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const Review = require('../models/reviewModel');
 const APIFeatures = require('./../utils/apiFeatures');
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const mongoose = require('mongoose');
@@ -138,8 +139,95 @@ exports.verifyUserAccount = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccount = (req, res) => {
-  res.status(200).render('account', {
-    title: 'Your account'
+  res.status(200).render('userAccount', {
+    title: 'Your account',
+    action: 'settings'
+  });
+}
+
+exports.getBilling = (req, res) => {
+  res.status(200).render('billing', {
+    title: 'Your billing',
+    action: 'billing'
+  });
+}
+
+exports.getManageTours = (req, res) => {
+  res.status(200).render('manageTours', {
+    title: 'Manage Tours',
+    action: 'manage-tours.list'
+  });
+};
+
+exports.getManageUsers = (req, res) => {
+  res.status(200).render('manageUsers', {
+    title: 'Manage Users',
+    action: 'manage-users.list'
+  });
+};
+
+exports.getManageReviews = catchAsync(async (req, res, next) => {
+  // Paramenter send by querystring
+  const { action, reviewId, tourId } = req.query;
+  const backURL = req.header('Referer');
+
+  console.log('getManageReviews action: ', action)
+  console.log('getManageReviews backURL: ', backURL)
+
+  let docResult = {};
+  // let tour = {};
+
+  // Create new Review
+  if (action.includes('list')) {
+    docResult = await Review.find();
+    if (!docResult) {
+      return next(new AppError(`No review document found`, 404));
+    }
+  }
+
+  // // Create new Review
+  // if (action === 'create') {
+  //   if (!tourId ) {
+  //     return next(new AppError('Please provide a tour id!', 400));
+  //   }
+  //   tour = await Tour.findById(tourId);
+  //   if (!tour) {
+  //     return next(new AppError(`No document found with review ID: ${reviewId}`, 404));
+  //   }
+  // }
+
+  // // Update Review. Existing reviewId
+  // if (action === 'update') {
+  //   if (!reviewId ) {
+  //     return next(new AppError('Please provide a review id!', 400));
+  //   }
+  //   docResult = await Review.findById(reviewId).populate('tour');
+  //   if (!docResult) {
+  //     return next(new AppError(`No document found with review ID: ${reviewId}`, 404));
+  //   }
+  //   tour = docResult.tour;
+  // }
+
+  // console.log('reviews: ', docResult);
+  // console.log('action: ', action);
+  // console.log('backURL: ', backURL);
+
+  res.status(200).render('manageReviews', {
+    data: {
+      title: 'Manage Reviews',
+      status: 'success',
+      results: docResult.length,
+      reviews: docResult
+    },
+    backURL,
+    action
+  });
+});
+
+exports.getManageBookings = (req, res) => {
+  res.status(200).render('manageBookings', {
+    title: 'Manage Bookings',
+    action: 'manage-bookings.list'
   });
 };
 
@@ -310,3 +398,9 @@ exports.getReviewForm = catchAsync(async (req, res, next) => {
     action
   });
 });
+
+// exports.createBooking = factory.createOne(Booking);
+// exports.getBooking = factory.getOneById(Booking);
+// exports.getAllReviews = factory.getAll(Review);
+// exports.updateBooking = factory.updateOne(Booking);
+// exports.deleteBooking = factory.deleteOne(Booking);
