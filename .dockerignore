@@ -1,0 +1,13 @@
+.history/
+.docker/dbdata/
+.docker/zsh
+.devcontainer/
+.git/
+.github/
+dist/
+node_modules/
+npm-debug.log
+docker-compose.dev.yaml
+docker-compose.prod.yaml
+Dockerfile.dev
+Dockerfile.prod

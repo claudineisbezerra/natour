@@ -1,0 +1,35 @@
+FROM node:16.16.0-slim as testing
+
+USER node
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+# COPY/NPM CI -> Feito em duas etapas para otimizar o processo de instalação. Neste caso há o uso/reaproveitamento de cache.
+COPY --chown=node:node package.json package-lock.json ./
+# RUN npm ci -> Faz instalações mais eficientes a partir do package-lock.json tanto prod quanto dev
+RUN npm ci
+
+COPY --chown=node:node . .
+RUN npm run build
+
+ENV NODE_ENV=production
+CMD [ "npm", "run", "start:prod" ]
+
+# Multi Stage - Descartar [Total ou em partes] os builds anteriores
+FROM node:16.16.0-slim as production
+
+USER node
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+# Reaproveita os arquivos gerados no estágio anterior(testing)
+COPY --from=testing --chown=node:node /home/node/app/package*.json ./
+# --omit=dev significa que não será instalado (devDependencies)
+RUN npm ci --omit=dev
+
+COPY --from=testing --chown=node:node /home/node/app .
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+CMD [ "npm", "run", "start:prod" ]

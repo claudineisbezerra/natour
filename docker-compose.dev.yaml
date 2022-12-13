@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    # environment:
+    #   - COMPOSE_PROJECT_NAME
+    # command: echo "I'm running ${COMPOSE_PROJECT_NAME}"
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - .:/home/node/app
+      - ./.docker/zsh/powerlevel10k/.p10k.zsh:/home/node/.p10k.zsh:delegated
+      - ./.docker/zsh/history:/home/node/zsh:delegated
+    depends_on:
+      - db
+
+  db:
+    image: mongo:6.0.3
+    # profiles:
+    #   - development
+    ports:
+      # - [Porta da Máquina]:[Porta do Container]
+      - 27017:27017
+    volumes:
+      - ./.docker/dbdata:/data/db
+      #- ./.docker/mongo:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      #- MONGO_INITDB_DATABASE=app
+      # entrypoint.init.db /dev-data/data
+
+      # db_test:
+      #   image: mongo:6.0.2
+      #   environment:
+      #     - MONGO_INITDB_ROOT_USERNAME=root
+      #     - MONGO_INITDB_ROOT_PASSWORD=root
+      #   tmpfs:
+      #     - /data/db
+
+  mongo-express:
+    image: mongo-express
+    # profiles:
+    #   - development
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=root
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=root
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+    depends_on:
+      - db
+
+# volumes:
+#   mongo-data:
+#     driver:local
+#     external: true
+#In Windows will be located at C:/ProgramData/docker/volumes
+#In Linux will be located at /var/lib/docker/volumes
+#In Mac will be located at /var/lib/docker/volumes

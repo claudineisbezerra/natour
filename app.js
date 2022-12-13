@@ -32,14 +32,12 @@ const app = express();
 // How to use it in routes
 // req.app.get('ROLES')
 
-
-
 app.enable('trust proxy');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-// 1) GLOBAL MIDDLEWARES
+// 1) GLOBAL MIDDLEWARES -
 // Express middleware to enable CORS
 app.use(cors());
 // Access-Control-Allow-Origin *
@@ -55,32 +53,24 @@ app.options('*', cors());
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // Set Content Security Policy in HTTP headers - Advanced configuration to avoid problems with mapbox and login at development
-const CSP ={
-  defaultSrc: [
-    'https:',
-    'https://*.stripe.com/',
-    'https://*.mapbox.com/'
-  ],
+const CSP = {
+  defaultSrc: ['https:', 'https://*.stripe.com/', 'https://*.mapbox.com/'],
   scriptSrc: [
     'https://js.stripe.com/',
     'https://checkout.stripe.com/',
     'https://js.stripe.com/',
     'https://edge-js.stripe.com',
-    'https://api.mapbox.com/'
+    'https://api.mapbox.com/',
   ],
   scriptSrcElem: [
     'https://api.mapbox.com/',
     'https://js.stripe.com/',
     'https://edge-js.stripe.com',
     'https://checkout.stripe.com/',
-    'https://js.stripe.com/'
+    'https://js.stripe.com/',
   ],
-  styleSrc: [
-    'https://api.mapbox.com/',
-    'https://fonts.googleapis.com/'
-  ],
+  styleSrc: ['https://api.mapbox.com/', 'https://fonts.googleapis.com/'],
   connectSrc: [
     'https://js.stripe.com/',
     'https://checkout.stripe.com/',
@@ -90,36 +80,27 @@ const CSP ={
     'http://127.0.0.1:*/',
     'ws://127.0.0.1:*/',
     'ws://tranquil-dawn-87413.herokuapp.com:*/',
-    'wss://tranquil-dawn-87413.herokuapp.com:*/'
+    'wss://tranquil-dawn-87413.herokuapp.com:*/',
   ],
-  imgSrc: [
-    'https://*.stripe.com'
-  ],
-  fontSrc: [
-    'fonts.googleapis.com', 
-    'fonts.gstatic.com'
-  ],
-  frameSrc: [
-    'https://js.stripe.com',
-    'https://hooks.stripe.com'
-  ]
-}
+  imgSrc: ['https://*.stripe.com'],
+  fontSrc: ['fonts.googleapis.com', 'fonts.gstatic.com'],
+  frameSrc: ['https://js.stripe.com', 'https://hooks.stripe.com'],
+};
 app.use(
-  helmet  
-  .contentSecurityPolicy({
+  helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'", ...CSP.defaultSrc],
       baseUri: ["'self'"],
       connectSrc: ["'self'", ...CSP.connectSrc],
-      scriptSrc: ["'self'",  "'unsafe-inline'", ...CSP.scriptSrc],
-      scriptSrcAttr: ["'self'",  "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", ...CSP.scriptSrc],
+      scriptSrcAttr: ["'self'", "'unsafe-inline'"],
       scriptSrcElem: ["'self'", "'unsafe-inline'", ...CSP.scriptSrcElem],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'", ...CSP.styleSrc],
       workerSrc: ["'self'", 'blob:'],
       objectSrc: ["'none'"],
       imgSrc: ["'self'", 'blob:', 'data:', ...CSP.imgSrc],
-      frameSrc: ["'self'",...CSP.frameSrc],
-      fontSrc: ["'self'", 'https:', 'data:', ...CSP.fontSrc]
+      frameSrc: ["'self'", ...CSP.frameSrc],
+      fontSrc: ["'self'", 'https:', 'data:', ...CSP.fontSrc],
     },
   })
 );
@@ -133,12 +114,16 @@ if (process.env.NODE_ENV === 'development') {
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP, please try again in an hour!'
+  message: 'Too many requests from this IP, please try again in an hour!',
 });
 app.use('/api', limiter);
 
 // Stripe webhook, BEFORE express.raw() parser, because stripe needs the body as stream/buffer and not as JSON
-app.post('/webhook-checkout', express.raw({type: 'application/json'}), bookingController.webhookStripeCheckout);
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookStripeCheckout
+);
 
 // parse requests of content-type - application/json
 app.use(express.json({ limit: '10kb' }));
@@ -164,8 +149,8 @@ app.use(
       'ratingsAverage',
       'maxGroupSize',
       'difficulty',
-      'price'
-    ]
+      'price',
+    ],
   })
 );
 

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      # Utiliza POR PADRÃO a variável ${STAGE:-testing}, definida em Dockerfile.prod
+      # Será sobrescrita, uma vez que tenha sido redefinida por exemplo em CI/CD
+      target: ${STAGE:-testing} 
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/dist
+      - /home/node/app/node_modules
+    depends_on:
+      - db_prod
+      
+  db_prod:
+    image: mongo:6.0.2
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
