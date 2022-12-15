@@ -1,4 +1,4 @@
-name: CI-CD Docker DockerHub 
+name: CICD Dockerize to DockerHub 
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -70,25 +70,26 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      # - name: Build for testing
-      #   id: build-for-testing
-      #   uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
-      #   with:
-      #     context: .
-      #     file: ./Dockerfile.prod
-      #     push: false
-      #     # push: ${{ github.event_name != 'pull_request' }}
-      #     target: build-stage
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      # Step to run tests without pushing Docker Image Created (push: false),
+      # targeting only 'build-stage' defined in Dockerfile.prod
+      - name: Build for testing
+        id: build-for-testing
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          file: ./Dockerfile.prod
+          push: false
+          # push: ${{ github.event_name != 'pull_request' }}
+          target: build-stage
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
-      # - name: Up containers for testing
-      #   run: docker compose -f docker-compose.prod.yaml up -d
+      # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
+      - name: Up containers for testing
+        id: up-containers-for-testing
+        run: docker compose -f docker-compose.prod.yaml up -d
 
       # # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
       # # Esta ação está disponível no repositório wait-for
