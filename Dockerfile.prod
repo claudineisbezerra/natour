@@ -1,35 +1,48 @@
-FROM node:16.16.0-slim as testing
+#Build stage
+FROM node:18-slim as build-stage
 
+RUN npm install -g nodemon
+
+# Node image already have a predifined user called 'node'. So we only need to use it here.
 USER node
+
 RUN mkdir -p /home/node/app
+
 WORKDIR /home/node/app
 
-# COPY/NPM CI -> Feito em duas etapas para otimizar o processo de instalação. Neste caso há o uso/reaproveitamento de cache.
+# COPY/NPM CI -> Feito em duas etapas para otimizar o processo de instalação. 
+# Neste caso há o uso/reaproveitamento de cache.
 COPY --chown=node:node package.json package-lock.json ./
+
 # RUN npm ci -> Faz instalações mais eficientes a partir do package-lock.json tanto prod quanto dev
 RUN npm ci
 
 COPY --chown=node:node . .
-RUN npm run build
+RUN npm run build:js
 
 ENV NODE_ENV=production
 CMD [ "npm", "run", "start:prod" ]
 
+#Runtime stage
 # Multi Stage - Descartar [Total ou em partes] os builds anteriores
-FROM node:16.16.0-slim as production
+FROM node:18-slim as runtime-stage
 
+RUN npm install -g nodemon
+
+# Node image already have a predifined user called 'node'. So we only need to use it here.
 USER node
+
 RUN mkdir -p /home/node/app
+
 WORKDIR /home/node/app
 
-# Reaproveita os arquivos gerados no estágio anterior(testing)
-COPY --from=testing --chown=node:node /home/node/app/package*.json ./
+# Reaproveita os arquivos gerados no estágio anterior(build-stage)
+COPY --from=build-stage --chown=node:node /home/node/app/package*.json ./
 # --omit=dev significa que não será instalado (devDependencies)
 RUN npm ci --omit=dev
 
-COPY --from=testing --chown=node:node /home/node/app .
+COPY --from=build-stage --chown=node:node /home/node/app .
 
 EXPOSE 3000
-
 ENV NODE_ENV=production
 CMD [ "npm", "run", "start:prod" ]

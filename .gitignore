@@ -1,5 +1,18 @@
+#Ignore node package repository library
 node_modules/
-.cache/
+
+#Ignore database local data
 .docker/dbdata/
+
+#Ignore zsh configurarion
 .docker/zsh/history/
+
+#Ignore cache files created by parcel and compression packages
+.cache/
+
+#Ignore configuration files
 *.env
+
+#Ignore compile package for distribution
+public/js/bundle.js
+public/js/bundle.js.map

@@ -1,13 +1,26 @@
-.history/
+#Ignore database local data
 .docker/dbdata/
-.docker/zsh
+
+#Ignore zsh configurarion
+.docker/zsh/history/
+
+#Ignore vscode dev environment
 .devcontainer/
+
+#Ignore git configuration files
 .git/
 .github/
-dist/
+
+#Ignore compile package for distribution
+public/js/bundle*
+
+#Ignore node package repository library
 node_modules/
 npm-debug.log
-docker-compose.dev.yaml
-docker-compose.prod.yaml
-Dockerfile.dev
-Dockerfile.prod
+
+#Ignore all docker related files (.md)
+docker-compose*
+Dockerfile*
+
+#Ignore all markdown files (.md)
+*.md

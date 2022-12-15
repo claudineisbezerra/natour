@@ -2,8 +2,12 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
-
+// todo: Relative URL like yhis: '/api/v1/users/signup'
+// will only work if API is installed at same server as frontend.
+// If frontend is installed in one server and backed in another,
+// will be required to use full path.
 export const signup = async (name, email, password, passwordConfirm) => {
+
   try {
     const res = await axios({
       method: 'POST',

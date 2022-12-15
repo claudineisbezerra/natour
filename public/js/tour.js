@@ -2,6 +2,10 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
+// todo: Relative URL like yhis: '/my-favorites'
+// will only work if API is installed at same server as frontend.
+// If frontend is installed in one server and backed in another,
+// will be required to use full path.
 export const myFavorites = async (favorites) => {
   if (!favorites && favorites.length <= 0) {
     const alertMessage = 'You have no Favorite Tours for now!'
