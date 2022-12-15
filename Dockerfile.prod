@@ -18,6 +18,9 @@ RUN npm ci
 COPY --chown=node:node . .
 RUN npm run build:js
 
+RUN docker ps -all
+RUN docker info
+
 ENV NODE_ENV=production
 CMD [ "npm", "run", "start:prod" ]
 
