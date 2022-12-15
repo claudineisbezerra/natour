@@ -1,5 +1,10 @@
-#Build stage
+# Build stage
 FROM node:18-slim as build-stage
+
+# Required to execute wait-for on ci-cd
+RUN apt update && apt install -y \
+    wget
+#     netcat
 
 RUN npm install -g nodemon
 
@@ -18,13 +23,10 @@ RUN npm ci
 COPY --chown=node:node . .
 RUN npm run build:js
 
-RUN docker ps -all
-RUN docker info
-
 ENV NODE_ENV=production
 CMD [ "npm", "run", "start:prod" ]
 
-#Runtime stage
+# Runtime stage
 # Multi Stage - Descartar [Total ou em partes] os builds anteriores
 FROM node:18-slim as runtime-stage
 
