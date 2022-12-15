@@ -93,8 +93,6 @@ jobs:
       # Esta Ação está disponível no repositório wait-for
       - name: Waiting environment to be ready
         id: waiting-environment-to-be-ready
-        # run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for | sh -s -- google.com:80 -- echo success
-        # run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- http://localhost:3000 -- echo success
         run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- localhost:3000 -- echo success
 
       # Uma vez que o ambiente esteja disponível:
@@ -129,13 +127,12 @@ jobs:
       - name: Sign the published docker image
         id: signed-docker-image
         if: ${{ github.event_name != 'pull_request' }}
-        env:
-          COSIGN_EXPERIMENTAL: 'true'
         # This step uses the identity token to provision an ephemeral certificate
         # Sign the images with GitHub OIDC Token **not production ready**
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
-
+        env:
+          COSIGN_EXPERIMENTAL: 'true'
 
   cd:
     needs: ci
