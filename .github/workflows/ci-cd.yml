@@ -124,15 +124,24 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
+
+      - name: Testing meta
+        id: testing-meta
+        run: echo "${{ steps.meta.outputs.tags }}"
+        run: echo "${{ steps.meta.outputs }}"
+
+
       - name: Sign the published docker image
         id: signed-docker-image
         if: ${{ github.event_name != 'pull_request' }}
+        env:
+          # COSIGN_EXPERIMENTAL: 'true'
+          COSIGN_EXPERIMENTAL: 1
         # This step uses the identity token to provision an ephemeral certificate
         # Sign the images with GitHub OIDC Token **not production ready**
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
-        env:
-          COSIGN_EXPERIMENTAL: 'true'
+
 
   cd:
     needs: ci
