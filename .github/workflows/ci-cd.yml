@@ -91,16 +91,11 @@ jobs:
 
       # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
       # Esta Ação está disponível no repositório wait-for
-      - name: Verify if wget exists in Ubuntu
-        id: test-wget
-        run: wget --version
-        
-      # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
-      # Esta Ação está disponível no repositório wait-for
       - name: Waiting environment to be ready
         id: waiting-environment-to-be-ready
-        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for | sh -s -- google.com:80 -- echo success
+        # run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for | sh -s -- google.com:80 -- echo success
         # run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- http://localhost:3000 -- echo success
+        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- localhost:3000 -- echo success
 
       # Uma vez que o ambiente esteja disponível:
       # Executo meus testes no container app_prod (pré compilado nos steps anteriores).
