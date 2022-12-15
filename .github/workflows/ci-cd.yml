@@ -18,6 +18,8 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  SERVICE: nest
+  REGION: us-central1
 
 jobs:
   ci:
@@ -50,7 +52,8 @@ jobs:
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Login into registry ${{ env.REGISTRY }}
+        id: log-into-registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
@@ -58,9 +61,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           logout: true
-          # registry: ${{ env.REGISTRY }}
-          # username: ${{ github.actor }}
-          # password: ${{ secrets.GITHUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -79,23 +79,21 @@ jobs:
           context: .
           file: ./Dockerfile.prod
           push: false
-          # push: ${{ github.event_name != 'pull_request' }}
           target: build-stage
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
-      # - name: Up containers for testing
-      #   id: up-containers-for-testing
-      #   run: docker compose -f docker-compose.prod.yaml up -d
+      # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
+      - name: Up containers for testing
+        id: up-containers-for-testing
+        run: docker compose -f docker-compose.prod.yaml up -d
 
-      # # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
-      # # Esta ação está disponível no repositório wait-for
-      # - name: Waiting environment to be ready
-      #   id: waiting-environment-to-be-ready
-      #   run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- http://localhost:3000 -- echo success
+      # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
+      # Esta ação está disponível no repositório wait-for
+      - name: Waiting environment to be ready
+        id: waiting-environment-to-be-ready
+        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for | sh -s -- http://localhost:3000 -- echo success
 
       # Uma vez que o ambiente esteja disponível:
       # Executo meus testes no container app_prod (pré compilado nos steps anteriores).
@@ -126,32 +124,35 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
+      - name: Sign the published docker image
+        id: signed-docker-image
         if: ${{ github.event_name != 'pull_request' }}
+        env:
+          COSIGN_EXPERIMENTAL: 'true'
         # This step uses the identity token to provision an ephemeral certificate
         # Sign the images with GitHub OIDC Token **not production ready**
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
-        env:
-          COSIGN_EXPERIMENTAL: 'true'
 
-  # cd:
-  #   needs: ci
-  #   if: ${{ github.event_name != 'pull_request' }}
-  #   runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
-  #     - id: 'auth'
-  #       uses: 'google-github-actions/auth@v0'
-  #       with:
-  #         credentials_json: '${{ secrets.GCP_SA_KEY }}'
+  cd:
+    needs: ci
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
 
-  #     - name: 'Deploy to Cloud Run'
-  #       uses: 'google-github-actions/deploy-cloudrun@v0'
-  #       with:
-  #         service: ${{ env.SERVICE }}
-  #         image: ${{ needs.ci.outputs.tags }}
-  #         region: ${{ env.REGION }}
-  #         env_vars: MONGO_DSN=${{ secrets.MONGO_DSN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # - id: 'auth'
+      #   uses: 'google-github-actions/auth@v0'
+      #   with:
+      #     credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      # - name: 'Deploy to Cloud Run'
+      #   uses: 'google-github-actions/deploy-cloudrun@v0'
+      #   with:
+      #     service: ${{ env.SERVICE }}
+      #     image: ${{ needs.ci.outputs.tags }}
+      #     region: ${{ env.REGION }}
+      #     env_vars: DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+      #     env_vars: DATABASE=${{ secrets.DATABASE }}

@@ -10,10 +10,8 @@ RUN mkdir -p /home/node/app
 
 WORKDIR /home/node/app
 
-# COPY/NPM CI -> Feito em duas etapas para otimizar o processo de instalação. 
-# Neste caso há o uso/reaproveitamento de cache.
+# COPY/NPM CI -> Feito em duas etapas para otimizar o processo de instalação. Neste caso haverá o uso/reaproveitamento de cache.
 COPY --chown=node:node package.json package-lock.json ./
-
 # RUN npm ci -> Faz instalações mais eficientes a partir do package-lock.json tanto prod quanto dev
 RUN npm ci
 
@@ -38,11 +36,12 @@ WORKDIR /home/node/app
 
 # Reaproveita os arquivos gerados no estágio anterior(build-stage)
 COPY --from=build-stage --chown=node:node /home/node/app/package*.json ./
-# --omit=dev significa que não será instalado (devDependencies)
+# --omit=dev significa que não serão instaladas as devDependencies
 RUN npm ci --omit=dev
 
 COPY --from=build-stage --chown=node:node /home/node/app .
 
 EXPOSE 3000
+
 ENV NODE_ENV=production
 CMD [ "npm", "run", "start:prod" ]

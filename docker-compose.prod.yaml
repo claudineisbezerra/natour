@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-      # Utiliza POR PADRÃO a variável ${STAGE:-build-stage}, definida em Dockerfile.prod
-      # Será sobrescrita, uma vez que tenha sido redefinida por exemplo em CI/CD
+      # STAGE utilizará por padrão a variável ${STAGE:-build-stage} conforme definido em Dockerfile.prod
+      # Será sobrescrita quando invocado explicitamente, por exemplo: STAGE=production docker compose -f docker-compose.prod.yaml up
       target: ${STAGE:-build-stage} 
     ports:
       - 3000:3000
