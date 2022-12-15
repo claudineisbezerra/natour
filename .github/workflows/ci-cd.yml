@@ -93,7 +93,7 @@ jobs:
       # Esta Ação está disponível no repositório wait-for
       - name: Verify if wget exists in Ubuntu
         id: test-wget
-        run: wget wget --version
+        run: wget --version
         
       # Aguarda até que o ambiente esteja no ar. Preciso saber quando o docker estará disponível.
       # Esta Ação está disponível no repositório wait-for
