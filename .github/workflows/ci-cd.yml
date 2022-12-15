@@ -126,10 +126,7 @@ jobs:
       # https://github.com/sigstore/cosign
 
       - name: Testing meta
-        id: testing-meta
         run: echo "${{ steps.meta.outputs.tags }}"
-        run: echo "${{ steps.meta.outputs }}"
-
 
       - name: Sign the published docker image
         id: signed-docker-image
