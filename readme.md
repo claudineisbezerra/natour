@@ -28,6 +28,7 @@ git remote -v
 
 git tag -a v1.0.0 -m "release 1.0.0"
 git push remote v1.0.0
+git push --tags
 git remote add origin https://github.com/claudineisbezerra/natours-full-app.git
 git add .
 git commit -m "Description of the change"
