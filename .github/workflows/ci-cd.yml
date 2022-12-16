@@ -40,13 +40,18 @@ jobs:
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
-      - name: Install cosign
+      - name: Install Cosign and test presence in path
+        uses: sigstore/cosign-installer@main
+      - name: Check install!
+        run: cosign version
+
+      - name: Install Cosign and test presence in path
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
-        with:
-          cosign-release: 'v1.11.0'
-        
-      # Check sigstore/cosign installation
+        # uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
+        uses: sigstore/cosign-installer@main
+        # with:
+        #   cosign-release: 'v1.11.0'
+        #   cosign-release: 'v1.13.1'
       - name: Check cosign install!
         run: cosign version
 
