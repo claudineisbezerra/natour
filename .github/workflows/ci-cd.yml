@@ -85,8 +85,8 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
 
-      - name: List meta output tags
-        run: echo ${{ steps.meta.outputs.tags }}
+      # - name: List meta output tags
+      #   run: echo ${{ steps.meta.outputs.tags }}
 
       # Step to run tests without pushing Docker Image Created (push: false),
       # targeting only 'build-stage' defined in Dockerfile.prod
