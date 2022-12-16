@@ -76,16 +76,16 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            
       - name: List meta output tags
         run: echo ${{ steps.meta.outputs.tags }}
-
-      # - name: List meta output labels
-      #   run: echo ${{ steps.meta.outputs.labels }}
-
-      - name: List meta output digest
-        run: echo ${{ steps.meta.outputs.digest }}
 
       # Step to run tests without pushing Docker Image Created (push: false),
       # targeting only 'build-stage' defined in Dockerfile.prod
@@ -152,30 +152,32 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: List build and push output tags
-        run: echo ${{ steps.build-and-push.outputs.tags }}
+        run: echo ${{ steps.meta.outputs.tags }}
+        # run: echo ${{ steps.build-and-push.outputs.tags }}
 
       - name: List build and push output labels
-        run: echo ${{ steps.build-and-push.outputs.labels }}
+        run: echo ${{ steps.meta.outputs.labels }}
+        # run: echo ${{ steps.build-and-push.outputs.labels }}
 
       - name: List build and push output digest
         run: echo ${{ steps.build-and-push.outputs.digest }}
 
 
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
-      - name: Sign the published docker image
-        id: signed-docker-image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          COSIGN_EXPERIMENTAL: 'true'
-        # This step uses the identity token to provision an ephemeral certificate
-        # Sign the images with GitHub OIDC Token **not production ready** against the sigstore community Fulcio instance.
-        # run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
-        # run: cosign /sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+      # # Sign the resulting Docker image digest except on PRs.
+      # # This will only write to the public Rekor transparency log when the Docker
+      # # repository is public to avoid leaking data.  If you would like to publish
+      # # transparency data even for private images, pass --force to cosign below.
+      # # https://github.com/sigstore/cosign
+      # - name: Sign the published docker image
+      #   id: signed-docker-image
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   env:
+      #     COSIGN_EXPERIMENTAL: 'true'
+      #   # This step uses the identity token to provision an ephemeral certificate
+      #   # Sign the images with GitHub OIDC Token **not production ready** against the sigstore community Fulcio instance.
+      #   # run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+      #   # run: cosign /sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+      #   run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
   cd:
     needs: ci
