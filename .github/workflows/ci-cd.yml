@@ -64,8 +64,7 @@ jobs:
         id: log-into-registry
         # if: github.event_name != 'pull_request'
         if: |
-            ${{ github.event_name != 'pull_request' | 
-            || github.event_name.push != 'branches' }}
+            ${{ github.event_name != 'pull_request' || github.event_name.push != 'branches' }}
 
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
@@ -131,8 +130,7 @@ jobs:
         # uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         # if: ${{ github.event_name != 'pull_request' }}
         if: |
-            ${{ github.event_name != 'pull_request' | 
-            || github.event_name.push != 'branches' }}
+            ${{ github.event_name != 'pull_request' || github.event_name.push != 'branches' }}
         with:
           context: .
           file: ./Dockerfile.prod
@@ -152,8 +150,7 @@ jobs:
         id: signed-docker-image
         # if: ${{ github.event_name != 'pull_request' }}
         if: |
-            ${{ github.event_name != 'pull_request' | 
-            || github.event_name.push != 'branches' }}
+            ${{ github.event_name != 'pull_request' || github.event_name.push != 'branches' }}
         env:
           COSIGN_EXPERIMENTAL: 'true'
         # This step uses the identity token to provision an ephemeral certificate
