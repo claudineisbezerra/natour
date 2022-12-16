@@ -18,7 +18,8 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   # IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME: claudineisbezerra/natours-full
+  # IMAGE_NAME: claudineisbezerra/natours-full
+  IMAGE_NAME: claudineisbezerra/natours-full:latest
   SERVICE: nest
   REGION: us-central1
 
@@ -81,8 +82,11 @@ jobs:
       - name: List meta output tags
         run: echo ${{ steps.meta.outputs.tags }}
 
-      - name: List meta output labels
-        run: echo ${{ steps.meta.outputs.labels }}
+      # - name: List meta output labels
+      #   run: echo ${{ steps.meta.outputs.labels }}
+
+      - name: List meta output digest
+        run: echo ${{ steps.meta.outputs.digest }}
 
       # Step to run tests without pushing Docker Image Created (push: false),
       # targeting only 'build-stage' defined in Dockerfile.prod
@@ -95,8 +99,24 @@ jobs:
           push: false
           target: build-stage
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+          # NAME   := acmecorp/foo
+          # TAG    := $$(git log -1 --pretty=%!H(MISSING))
+          # IMG    := ${NAME}:${TAG}
+          # LATEST := ${NAME}:latest
+          
+          # build:
+          #   @docker build -t ${IMG} .
+          #   @docker tag ${IMG} ${LATEST}
+          
+          # push:
+          #   @docker push ${NAME}
+          
+          # login:
+          #   @docker log -u ${DOCKER_USER} -p ${DOCKER_PASS}
 
       # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
       - name: Up containers for testing
@@ -135,6 +155,9 @@ jobs:
 
       - name: List build and push output tags
         run: echo ${{ steps.build-and-push.outputs.tags }}
+
+      - name: List build and push output labels
+        run: echo ${{ steps.build-and-push.outputs.labels }}
 
       - name: List build and push output digest
         run: echo ${{ steps.build-and-push.outputs.digest }}
