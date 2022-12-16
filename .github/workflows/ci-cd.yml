@@ -136,13 +136,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # - name: List build and push output tags
-      #   run: echo ${{ steps.build-and-push.outputs.tags }}
-
-      # - name: List build and push output digest
-      #   run: echo ${{ steps.build-and-push.outputs.digest }}
-
-
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
@@ -157,7 +150,8 @@ jobs:
         # Sign the images with GitHub OIDC Token **not production ready** against the sigstore community Fulcio instance.
         # run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
         # run: cosign /sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+        # run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+        run: echo "${{ steps.build-and-push.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
   cd:
     needs: ci
