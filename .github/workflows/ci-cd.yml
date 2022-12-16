@@ -102,8 +102,7 @@ jobs:
           file: ./Dockerfile.prod
           push: false
           target: build-stage
-          # tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -137,21 +136,10 @@ jobs:
           file: ./Dockerfile.prod
           target: runtime-stage
           push: true
-          # tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-
-        # with:
-        #   context: .
-        #   push: ${{ github.event_name != 'pull_request' }}
-        #   tags: ${{ steps.meta.outputs.tags }}
-        #   labels: ${{ steps.meta.outputs.labels }}
-        #   cache-from: type=gha
-        #   cache-to: type=gha,mode=max
-
 
       - name: List build and push output tags
         run: echo ${{ steps.build-and-push.outputs.tags }}
