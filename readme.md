@@ -469,8 +469,9 @@ npm run start:prod
 - [ ] Automate deployment for the app
       - 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
       - 14/12/2022: Added Dockerfile.prod and docker-compose.prod.yaml
-      - Manually create docker images and save it to docker hub using docker compose CLI
-      - Automate docker image creation and register to docker hub using github actions
+      - 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
+      - 16/12/2022: Automate docker image creation and register to docker hub using github actions
+      - Install app at google cloudrun service using kubernetes
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours, users, reviews, and bookings.
 - [ ] Separate frontend and backend projects
       - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!
