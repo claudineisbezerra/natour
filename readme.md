@@ -26,9 +26,17 @@ Example of creating/updating github repo with Semantic Release and Tags:
 ```bash
 git remote -v
 
+git describe --tags
+#Identify current tag in use
+
 git tag -a v1.0.0 -m "release 1.0.0"
-git push remote v1.0.0
+git tag -a v1.1.2 -m "CICD integration tests"
+#Create a new tag
+
+git push remote v1.1.2
 git push --tags
+#Sent tag to remote repo
+
 git remote add origin https://github.com/claudineisbezerra/natours-full-app.git
 git add .
 git commit -m "Description of the change"
