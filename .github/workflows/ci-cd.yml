@@ -45,7 +45,10 @@ jobs:
         uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
         with:
           cosign-release: 'v1.11.0'
-
+        
+      # Check sigstore/cosign installation
+      - name: Check cosign install!
+        run: cosign version
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
@@ -125,21 +128,15 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-
-      - name: Testing meta
-        run: echo "${{ steps.meta.outputs.tags }}"
-
       - name: Sign the published docker image
         id: signed-docker-image
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          # COSIGN_EXPERIMENTAL: 'true'
-          COSIGN_EXPERIMENTAL: 1
+          COSIGN_EXPERIMENTAL: 'true'
         # This step uses the identity token to provision an ephemeral certificate
-        # Sign the images with GitHub OIDC Token **not production ready**
-        # against the sigstore community Fulcio instance.
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
-
+        # Sign the images with GitHub OIDC Token **not production ready** against the sigstore community Fulcio instance.
+        run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+        # run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
   cd:
     needs: ci
