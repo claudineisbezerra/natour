@@ -81,14 +81,9 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
             type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
-            
+
       - name: List meta output tags
         run: echo ${{ steps.meta.outputs.tags }}
 
@@ -96,7 +91,7 @@ jobs:
       # targeting only 'build-stage' defined in Dockerfile.prod
       - name: Build for testing
         id: build-for-testing
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        uses: docker/build-push-action@v3.2.0
         with:
           context: .
           file: ./Dockerfile.prod
