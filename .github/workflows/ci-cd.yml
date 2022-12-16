@@ -76,13 +76,18 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
+          # list of Docker images to use as base name for tags
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # generate Docker tags based on the following events/attributes
           tags: |
+            type=schedule
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
             
       - name: List meta output tags
         run: echo ${{ steps.meta.outputs.tags }}
@@ -97,7 +102,8 @@ jobs:
           file: ./Dockerfile.prod
           push: false
           target: build-stage
-          tags: ${{ steps.meta.outputs.tags }}
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -130,11 +136,21 @@ jobs:
           file: ./Dockerfile.prod
           target: runtime-stage
           push: true
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.meta.outputs.tags }}
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+
+        # with:
+        #   context: .
+        #   push: ${{ github.event_name != 'pull_request' }}
+        #   tags: ${{ steps.meta.outputs.tags }}
+        #   labels: ${{ steps.meta.outputs.labels }}
+        #   cache-from: type=gha
+        #   cache-to: type=gha,mode=max
+
 
       - name: List build and push output tags
         run: echo ${{ steps.build-and-push.outputs.tags }}
