@@ -101,21 +101,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-          # NAME   := acmecorp/foo
-          # TAG    := $$(git log -1 --pretty=%!H(MISSING))
-          # IMG    := ${NAME}:${TAG}
-          # LATEST := ${NAME}:latest
-          
-          # build:
-          #   @docker build -t ${IMG} .
-          #   @docker tag ${IMG} ${LATEST}
-          
-          # push:
-          #   @docker push ${NAME}
-          
-          # login:
-          #   @docker log -u ${DOCKER_USER} -p ${DOCKER_PASS}
-
       # Levanta o ambiente - com o propósito de testar - sem travar o terminal (-d)
       - name: Up containers for testing
         id: up-containers-for-testing
@@ -152,12 +137,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: List build and push output tags
-        run: echo ${{ steps.meta.outputs.tags }}
-        # run: echo ${{ steps.build-and-push.outputs.tags }}
-
-      - name: List build and push output labels
-        run: echo ${{ steps.meta.outputs.labels }}
-        # run: echo ${{ steps.build-and-push.outputs.labels }}
+        run: echo ${{ steps.build-and-push.outputs.tags }}
 
       - name: List build and push output digest
         run: echo ${{ steps.build-and-push.outputs.digest }}
