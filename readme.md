@@ -22,28 +22,6 @@ Clone repository from GitHub:
 git clone https://github.com/claudineisbezerra/natour.git
 ```
 
-Example of creating/updating github repo with Semantic Release and Tags:
-```bash
-git remote -v
-# List remote repo connection
-
-git describe --tags
-#Identify current tag in use
-
-git tag -a v1.0.0 -m "release 1.0.0"
-git tag -a v1.1.2 -m "CICD integration tests"
-git tag -a v1.1.3 -m "CICD deply to Google Cloud Run"
-#Create a new tag
-
-git push --tags
-#Sent tag to remote repo
-
-git remote add origin https://github.com/claudineisbezerra/natours-full-app.git
-git add .
-git commit -m "Description of the change"
-git push -u origin master
-```
-
 ## Database
 Local MongDB reference (Version 6.\*):
 ```js
@@ -107,10 +85,36 @@ heroku open
 Install App on Heroku
 ```bash
 git remote -v
+# List/Verify remote repo connection
+
 git push heroku master
 ```
 
 ## Commands Cheat Sheet
+Git Commands
+```bash
+# Example of tagging github repo with Semantic Release
+
+git remote -v
+# List/Verify remote repo connection
+
+git describe --tags
+#Identify current tag in use
+
+git tag -a v1.1.3 -m "CICD deploy to Google Cloud Run"
+#Create a new tag
+
+git push --tags
+#Sent tag to remote repo
+
+git add .
+git commit -m "Description of the change"
+#Add and commit changes to local repo
+
+git push -u origin master
+#Delivery to remote repo
+```
+
 WSL commands
 ```bash
 wsl -l -v
