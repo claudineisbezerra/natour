@@ -25,12 +25,14 @@ git clone https://github.com/claudineisbezerra/natour.git
 Example of creating/updating github repo with Semantic Release and Tags:
 ```bash
 git remote -v
+# List remote repo connection
 
 git describe --tags
 #Identify current tag in use
 
 git tag -a v1.0.0 -m "release 1.0.0"
 git tag -a v1.1.2 -m "CICD integration tests"
+git tag -a v1.1.3 -m "CICD deply to Google Cloud Run"
 #Create a new tag
 
 git push --tags
@@ -468,12 +470,13 @@ npm run start:prod
       - Added Dockerfile.dev and docker-compose.dev.yaml
 - [x] 13/12/2022: Start using Semantic Release
       - Generated release 1.1.0 of the application in github
-- [ ] Automate deployment for the app
+- [x] Automate deployment for the app
       - 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
       - 14/12/2022: Added Dockerfile.prod and docker-compose.prod.yaml
       - 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
       - 16/12/2022: Automate docker image creation and register to docker hub using github actions
-      - Install app at google Cloudrun Service (kubernetes)
+      - 22/12/2022: Install app at google Cloudrun Service (kubernetes administrated service)
+      - 22/12/2022: New TAG VERSION delivered 
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours, users, reviews, and bookings.
 - [ ] Separate frontend and backend projects
       - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!
