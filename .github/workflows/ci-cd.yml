@@ -192,5 +192,5 @@ jobs:
           image: ${{ needs.ci.outputs.tags }}
           # image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           region: ${{ env.REGION }}
-          # env_vars: DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          env_vars: DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           env_vars: DATABASE=${{ secrets.DATABASE }}
