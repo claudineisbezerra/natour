@@ -20,7 +20,7 @@ env:
   # Using Google Artifact Registry
   REGISTRY: gcr.io
   # IMAGE_NAME: [GCP_PROJECT_NAME]/[CLOUDRUN_SERVICE_NAME]
-  IMAGE_NAME: natours-full/natours-full-site
+  IMAGE_NAME: natours/natours-full
 
   # Github Repository Image Name as: <account>/<repo>
   # IMAGE_NAME: ${{ github.repository }}
