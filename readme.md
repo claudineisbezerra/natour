@@ -377,7 +377,10 @@ docker compose up
 docker compose -f docker-compose.dev.yaml up --build
 docker compose -f docker-compose.dev.yaml up app db --build
 docker compose --profile=develomment -f docker-compose.dev.yaml up --build
-#Container creation, using partial cpntainers or profile
+#Container creation, using partial containers or profile
+
+STAGE=runtime-stage docker compose -f docker-compose.prod.yaml up --build
+#Container creation, using runtime-stage defined to generate final version for production
 
 docker compose -f docker-compose.prod.yaml up --build
 
