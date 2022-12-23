@@ -122,12 +122,12 @@ git tag v1.1.3
 git tag v1.1.4
 #Create a new tag
 
-git tag -a v1.1.7 -m "CICD deploy to Google Cloud Run"
+git tag -a v1.1.8 -m "CICD deploy to Google Cloud Run"
 #Create a new RELEASE tag (annotated tag)
 
 git push origin <tagname>
 git push origin master <tagname>
-git push origin v1.1.7
+git push origin v1.1.8
 #Send tag to remote repo
 
 git push --tags

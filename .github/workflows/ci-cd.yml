@@ -52,16 +52,11 @@ jobs:
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install Cosign
-        # if: ${{ github.event_name != 'pull_request' && 
-        #     (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
+        if: ${{ github.event_name != 'pull_request' && 
+            (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
         uses: sigstore/cosign-installer@main
         with:
           cosign-release: 'v1.13.1'
-
-      # - name: Check Cosign Installation
-      #   if: ${{ github.event_name != 'pull_request' && 
-      #       (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
-      #   run: cosign version
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
@@ -71,20 +66,17 @@ jobs:
       # https://github.com/docker/login-action
       - name: Login into registry ${{ env.REGISTRY }}
         id: log-into-registry
-        # if: ${{ github.event_name != 'pull_request' && 
-        #     (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
+        if: ${{ github.event_name != 'pull_request' && 
+            (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ env.REGISTRY }}
-
           # Docker Hub Registry Auth
           # username: ${{ secrets.DOCKER_USERNAME }}
           # password: ${{ secrets.DOCKER_PASSWORD }}
-
           # Google Artifact Registry Auth
           username: _json_key
           password: ${{ secrets.GCP_SA_KEY }}
-
           logout: true
 
       # Extract metadata (tags, labels) for Docker
@@ -100,20 +92,11 @@ jobs:
             latest=false
             prefix=
             suffix=
-          # set latest tag for master branch
-          # tags: |
-            # type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
           # set latest tag for default branch
+          # set semver (1.x.x) version style
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
-          # type=ref,event=tag
-
-
-          # generate Docker tags based on the following events/attributes
-          # tags: |
-          #   type=ref,event=branch
-          #   type=semver,pattern={{version}}
 
       # Show github metadata (TAGS)
       - name: Show GitHub Tags
@@ -156,8 +139,8 @@ jobs:
       - name: Build and push docker image
         id: build-and-push
         uses: docker/build-push-action@v3.2.0
-        # if: ${{ github.event_name != 'pull_request' && 
-        #     (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
+        if: ${{ github.event_name != 'pull_request' && 
+            (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
         with:
           context: .
           file: ./dockerfile.prod
@@ -175,57 +158,38 @@ jobs:
       # https://github.com/sigstore/cosign
       - name: Sign the published docker image
         id: signed-docker-image
-        # if: ${{ github.event_name != 'pull_request' && 
-        #     (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
+        if: ${{ github.event_name != 'pull_request' && 
+            (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
         env:
           COSIGN_EXPERIMENTAL: 'true'
         # This step uses the identity token to provision an ephemeral certificate
         # Sign the images with GitHub OIDC Token **not production ready** against the sigstore community Fulcio instance.
-        # run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
-        # run: cosign /sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
-        # run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
         run: echo "${{ steps.build-and-push.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
   cd:
-    # Next steps will be executed only if ci was successfully executed
+    # Next steps will be executed only if ci was successfully executed and only after PUSH TAG
     needs: ci
     runs-on: ubuntu-latest
-    # if: ${{ github.event_name != 'pull_request' && 
-    #     (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
+    if: ${{ github.event_name != 'pull_request' && 
+        (github.event_name == 'push' && !contains(github.ref, '/heads/master') ) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       # Google Artifact Registry Auth
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      - name: 'Show CI TAGS 1'
-        run: echo '${{ needs.ci.outputs.tags }}'
-
-      - name: 'Show CI TAGS 2'
-        run: echo ${{ needs.ci.outputs.tags }}
-
-      - name: 'Show CI TAGS 3'
-        run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+      # Deploy to Cloud Run from Google Artifact Registry
       - name: 'Deploy to Cloud Run'
         id: deploy
         uses: 'google-github-actions/deploy-cloudrun@v1'
         with:
-          # service: natours-full-site
           service: ${{ env.SERVICE }}
-          # region: us-central1
           region: ${{ env.REGION }}
-          # image: gcr.io/natours-full/natours-full-site:latest
-          # image: gcr.io/natours-full/natours-full-site:1.1.4
-          # image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           image: ${{ needs.ci.outputs.tags }}
           env_vars: |
             DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
             DATABASE=${{ secrets.DATABASE }}
-
-      # Show Cloud Run url output in later steps
-      - name: Show Output Url created by deploy
-        run: echo ${{ steps.deploy.outputs.url }}
