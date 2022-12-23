@@ -474,14 +474,14 @@ npm run start:prod
 - [x] 24/08/2022: Implement restriction that users can only review (Create/Update/Delete) a tour that they have actually booked
 - [x] 24/08/2022: Implement nested booking routes: /tours/:id/bookings and /users/:id/bookings;
 - [x] 29/08/2022: Improve tour dates: add a participants and a soldOut field to each date.
-      - A date then becomes like an instance of the tour.
-      - Then, when a user books, they need to select one of the dates.
-      - A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
-      - So, when a user wants to book, you need to check if tour on the selected date is still available
+    - [x] A date then becomes like an instance of the tour.
+    - [x] Then, when a user books, they need to select one of the dates.
+    - [x] A new booking will increase the number of participants in the date, until it is booked out (participants > maxGroupSize).
+    - [x] So, when a user wants to book, you need to check if tour on the selected date is still available
 - [x] Implement advanced authentication features
-      - 30/08/2022: confirm user email
-      - 06/09/2022: keep users logged in with refresh tokens
-      - 09/09/2022: two-factor authentication
+    - [x] 30/08/2022: confirm user email
+    - [x] 06/09/2022: keep users logged in with refresh tokens
+    - [x] 09/09/2022: two-factor authentication
 - [x] 09/09/2022: Implement a sign up form, similar to the login form
 - [x] 09/09/2022: Create verification endpoint to activate account
 - [x] 17/09/2022: On the tour detail page, if a user has taken a tour, allow them add a review directly on the website
@@ -489,24 +489,24 @@ npm run start:prod
 - [x] 17/09/2022: On the tour detail page, allow user to review already booked tours and update existing reviews
 - [x] 12/09/2022: Show new Tour date format. Show only the tour dates booked by the user
 - [x] Hide the entire booking section on the tour detail page if current user has already booked the tour
-      - [x] 17/09/2022: Prevent duplicate bookings on the model
-      - [x] 17/09/2022: Booked tour been presented by date.
+    - [x] 17/09/2022: Prevent duplicate bookings on the model
+    - [x] 17/09/2022: Booked tour been presented by date.
 - [x] 20/09/2022: Implement “like tour” functionality, with favourite tour page;
 - [x] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them
-      - [x] 17/09/2022: Implemented using PUG templates
-      - [x] 13/12/2022: Generated release 1.0.0 of the application in github
-      - [x] 13/12/2022: Start using docker for the app. Setup remote debugging support
-      - [x] 13/12/2022: Added dockerfile.dev and docker-compose.dev.yaml
-      - [x] 13/12/2022: Start using Semantic Release
-      - [x] 13/12/2022: Generated release 1.1.0 of the application in github
+    - [x] 17/09/2022: Implemented using PUG templates
+    - [x] 13/12/2022: Generated release 1.0.0 of the application in github
+    - [x] 13/12/2022: Start using docker for the app. Setup remote debugging support
+    - [x] 13/12/2022: Added dockerfile.dev and docker-compose.dev.yaml
+    - [x] 13/12/2022: Start using Semantic Release
+    - [x] 13/12/2022: Generated release 1.1.0 of the application in github
 - [x] Automate deployment for the app
-      - [x] 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
-      - [x] 14/12/2022: Added dockerfile.prod and docker-compose.prod.yaml
-      - [x] 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
-      - [x] 16/12/2022: Automate docker image creation and register to docker hub using github actions
-      - [x] 22/12/2022: Install app at google CloudRun Service (Kubernetes Administrated Service)
-      - [x] 23/12/2022: New TAG VERSION delivered for testings
+    - [x] 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
+    - [x] 14/12/2022: Added dockerfile.prod and docker-compose.prod.yaml
+    - [x] 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
+    - [x] 16/12/2022: Automate docker image creation and register to docker hub using github actions
+    - [x] 22/12/2022: Install app at google CloudRun Service (Kubernetes Administrated Service)
+    - [x] 23/12/2022: New TAG VERSION delivered for testings
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours, users, reviews, and bookings.
 - [ ] Separate frontend and backend projects
-      - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!
+    - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!
 - [ ] Add unit and system test to the app
