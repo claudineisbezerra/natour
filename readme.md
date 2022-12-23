@@ -98,21 +98,40 @@ Git Commands
 git remote -v
 # List/Verify remote repo connection
 
-git describe --tags
-#Identify current tag in use
-
-git tag -a v1.1.3 -m "CICD deploy to Google Cloud Run"
-#Create a new tag
-
-git push --tags
-#Sent tag to remote repo
-
 git add .
 git commit -m "Description of the change"
 #Add and commit changes to local repo
 
 git push -u origin master
-#Delivery to remote repo
+#Save commited changes to remote repo
+
+git tag
+git tag -n
+#Show created tags
+
+git status
+#Show pending changes to be commited
+
+git log
+#Show commits
+
+git describe --tags
+#Show current tag in use
+
+git tag v1.1.3
+#Create a new tag
+
+git tag -a v1.1.3 -m "CICD deploy to Google Cloud Run"
+#Create a new RELEASE tag (annotated tag)
+
+git push origin <tagname>
+git push origin master <tagname>
+git push origin v1.1.3
+#Send tag to remote repo
+
+git push --tags
+git push origin --tags
+#Send all tags to remote repo
 ```
 
 WSL commands
@@ -212,12 +231,12 @@ docker history <image_name>:<label>
 Docker IMAGE commands
 ```bash
 docker build -t <image_name>
-docker build -t natours -f Dockerfile.dev .
+docker build -t natours -f dockerfile.dev .
 docker build -t <image_name> -f <dockerfile_name> .
 #The docker build command builds an image called 'natours' from a Dockerfile.env
 
 docker build -t <image_name> . –no-cache
-docker build -t natours -f Dockerfile.dev . –no-cache
+docker build -t natours -f dockerfile.dev . –no-cache
 docker build -t <image_name> -f <dockerfile_name> . <params>
 #The docker build command builds an image called 'natours' from a Dockerfile.env without the cache
 
@@ -282,7 +301,7 @@ docker pull claudineisbezerra/natours_image:latest
 Docker CONTAINER Commands
 ```bash
 docker build -t <image_name>
-docker build -t natours-full:1.1.0 -f Dockerfile.dev .
+docker build -t natours-full:1.1.0 -f dockerfile.dev .
 
 docker scan natours-full:1.1.0
 #Scan docker image for vulnerabillities using snyk
@@ -290,15 +309,15 @@ docker scan natours-full:1.1.0
 #Integrate scanning in CI/CD process
 
 
-snyk test --docker natours-full:1.1.0 --file=Dockerfile.prod
+snyk test --docker natours-full:1.1.0 --file=dockerfile.prod
 # Scan the image for vulnerabilities with snyk
 
 snyk monitor --docker natours-full:1.1.0
 #Monitor a Docker image for known vulnerabilities. Snyk can notify and provide remediation advice.
 
-docker build --target build-stage -t natours-full:1.1.0 -f Dockerfile.prod .
-docker build --target runtime-stage -t natours-full:1.1.0 -f Dockerfile.prod .
-#The docker build command builds an image called 'natours-full:1.1.0' from a Dockerfile.prod using multi steps
+docker build --target build-stage -t natours-full:1.1.0 -f dockerfile.prod .
+docker build --target runtime-stage -t natours-full:1.1.0 -f dockerfile.prod .
+#The docker build command builds an image called 'natours-full:1.1.0' from a dockerfile.prod using multi steps
 
 docker build -t <image_name> -f <dockerfile_name> .
 #The docker build command builds an image from a dockerfile
@@ -432,7 +451,7 @@ docker compose -f docker-compose.dev.yaml --profile development up --build
 docker compose -f docker-compose.dev.yaml exec app bash
 npm run start:dev
 
-#Executa somente o estágio de testing definido em Dockerfile.prod
+#Executa somente o estágio de testing definido em dockerfile.prod
 STAGE=testing docker compose -f docker-compose.prod.yaml up
 STAGE=production docker compose -f docker-compose.prod.yaml up
 
@@ -471,16 +490,16 @@ npm run start:prod
       - 17/09/2022: Implemented using PUG templates
       - 13/12/2022: Generated release 1.0.0 of the application in github
 - [x] 13/12/2022: Start using docker for the app. Setup remote debugging support
-      - Added Dockerfile.dev and docker-compose.dev.yaml
+      - Added dockerfile.dev and docker-compose.dev.yaml
 - [x] 13/12/2022: Start using Semantic Release
       - Generated release 1.1.0 of the application in github
 - [x] Automate deployment for the app
       - 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
-      - 14/12/2022: Added Dockerfile.prod and docker-compose.prod.yaml
+      - 14/12/2022: Added dockerfile.prod and docker-compose.prod.yaml
       - 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
       - 16/12/2022: Automate docker image creation and register to docker hub using github actions
-      - 22/12/2022: Install app at google Cloudrun Service (kubernetes administrated service)
-      - 22/12/2022: New TAG VERSION delivered 
+      - 22/12/2022: Install app at google CloudRun Service (Kubernetes Administrated Service)
+      - 22/12/2022: New TAG VERSION delivered for testings
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours, users, reviews, and bookings.
 - [ ] Separate frontend and backend projects
       - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!

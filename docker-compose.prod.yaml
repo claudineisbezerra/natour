@@ -4,8 +4,8 @@ services:
   app_prod:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-      # STAGE utilizará por padrão a variável ${STAGE:-build-stage} conforme definido em Dockerfile.prod
+      dockerfile: dockerfile.prod
+      # STAGE utilizará por padrão a variável ${STAGE:-build-stage} conforme definido em dockerfile.prod
       # Será sobrescrita quando invocado explicitamente, por exemplo: STAGE=production docker compose -f docker-compose.prod.yaml up
       target: ${STAGE:-build-stage} 
     ports:
