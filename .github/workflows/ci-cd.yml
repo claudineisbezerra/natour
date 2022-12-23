@@ -97,7 +97,7 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=auto
+            latest=false
             prefix=
             suffix=
           # set latest tag for master branch
