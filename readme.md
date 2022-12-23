@@ -65,29 +65,34 @@ STRIPE_WEBHOOK_SECRET=<STRIP_KEY>
 ```
 
 ## Deployment
-Install and verify Heroku CLI
+Deploy to Google Cloud Run with GitHub Action
+```bash
+https://cloud.google.com/community/tutorials/cicd-cloud-run-github-actions
+
+```
+
+Install and verify in Heroku using Heroku CLI
 ```bash
 https://devcenter.heroku.com/articles/heroku-cli
 heroku --version
-```
 
-Create App on Heroku
-```bash
 heroku login
-heroku create
+#Login to heroku
+
+heroku create <example-app>
+#Create app to heroku
+
 heroku logs --tail
 heroku ps:scale web=0
 heroku ps:scale web=1
 heroku ps:scale web=2
 heroku open
-```
 
-Install App on Heroku
-```bash
 git remote -v
 # List/Verify remote repo connection
 
 git push heroku master
+# Deploy app to heroku
 ```
 
 ## Commands Cheat Sheet
@@ -480,27 +485,27 @@ npm run start:prod
 - [x] 09/09/2022: Implement a sign up form, similar to the login form
 - [x] 09/09/2022: Create verification endpoint to activate account
 - [x] 17/09/2022: On the tour detail page, if a user has taken a tour, allow them add a review directly on the website
-      - 17/09/2022: On the tour detail page, allow user to book for only not booked dates
-      - 17/09/2022: On the tour detail page, allow user to review already booked tours and update existing reviews
-      - 12/09/2022: Show new Tour date format. Show only the tour dates booked by the user
+- [x] 17/09/2022: On the tour detail page, allow user to book for only not booked dates
+- [x] 17/09/2022: On the tour detail page, allow user to review already booked tours and update existing reviews
+- [x] 12/09/2022: Show new Tour date format. Show only the tour dates booked by the user
 - [x] Hide the entire booking section on the tour detail page if current user has already booked the tour
-      - 17/09/2022: Prevent duplicate bookings on the model
-      - 17/09/2022: Booked tour been presented by date.
+      - [x] 17/09/2022: Prevent duplicate bookings on the model
+      - [x] 17/09/2022: Booked tour been presented by date.
 - [x] 20/09/2022: Implement “like tour” functionality, with favourite tour page;
 - [x] On the user account page, implement the “My Reviews” page, where all reviews are displayed, and a user can edit them
-      - 17/09/2022: Implemented using PUG templates
-      - 13/12/2022: Generated release 1.0.0 of the application in github
-- [x] 13/12/2022: Start using docker for the app. Setup remote debugging support
-      - Added dockerfile.dev and docker-compose.dev.yaml
-- [x] 13/12/2022: Start using Semantic Release
-      - Generated release 1.1.0 of the application in github
+      - [x] 17/09/2022: Implemented using PUG templates
+      - [x] 13/12/2022: Generated release 1.0.0 of the application in github
+      - [x] 13/12/2022: Start using docker for the app. Setup remote debugging support
+      - [x] 13/12/2022: Added dockerfile.dev and docker-compose.dev.yaml
+      - [x] 13/12/2022: Start using Semantic Release
+      - [x] 13/12/2022: Generated release 1.1.0 of the application in github
 - [x] Automate deployment for the app
-      - 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
-      - 14/12/2022: Added dockerfile.prod and docker-compose.prod.yaml
-      - 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
-      - 16/12/2022: Automate docker image creation and register to docker hub using github actions
-      - 22/12/2022: Install app at google CloudRun Service (Kubernetes Administrated Service)
-      - 22/12/2022: New TAG VERSION delivered for testings
+      - [x] 14/12/2022: Manually create docker images and register to docker hub using docker CLI (claudineisbezerra/natours-full:1.1.0)
+      - [x] 14/12/2022: Added dockerfile.prod and docker-compose.prod.yaml
+      - [x] 15/12/2022: Manually create docker images and save it to docker hub using docker compose CLI
+      - [x] 16/12/2022: Automate docker image creation and register to docker hub using github actions
+      - [x] 22/12/2022: Install app at google CloudRun Service (Kubernetes Administrated Service)
+      - [x] 23/12/2022: New TAG VERSION delivered for testings
 - [ ] For administrators, implement all the “Manage” pages, where they can CRUD (create, read, update, delete) tours, users, reviews, and bookings.
 - [ ] Separate frontend and backend projects
       - If you know React ⚛ or Vue 🧡, this would be an amazing way to use the Natours API and train your skills!
