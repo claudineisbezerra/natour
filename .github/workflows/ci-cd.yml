@@ -91,15 +91,30 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           # list of Docker images to use as base name for tags
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # generate Docker tags based on the following events/attributes
+          flavor: |
+            latest=auto
+            prefix=
+            suffix=
+          # set latest tag for master branch
+          # tags: |
+            # type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          # set latest tag for default branch
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+          # generate Docker tags based on the following events/attributes
+          # tags: |
+          #   type=ref,event=branch
+          #   type=semver,pattern={{version}}
+
+      # Show github metadata (TAGS)
+      - name: Show GitHub Tags
+        run: echo ${{ steps.meta.outputs.tags }}
 
       # Step to run tests without pushing Docker Image Created (push: false),
       # targeting only 'build-stage' defined in dockerfile.prod
@@ -209,5 +224,5 @@ jobs:
             DATABASE=${{ secrets.DATABASE }}
 
       # Show Cloud Run url output in later steps
-      - name: Show Output
+      - name: Show Output Url created by deploy
         run: echo ${{ steps.deploy.outputs.url }}
